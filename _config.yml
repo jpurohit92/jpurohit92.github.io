@@ -46,14 +46,15 @@ google_analytics:
 
 # Your website URL (e.g. http://amitmerchant1990.github.io or http://www.amitmerchant.com)
 # Used for Sitemap.xml and your RSS feed
-url: "https://jatinpurohit.tech"
+# Default GitHub Pages project site: https://username.github.io/repository-name
+url: "https://jpurohit92.github.io"
 enforce_ssl: 
 
 # If you're hosting your site at a Project repository on GitHub pages
 # (http://yourusername.github.io/repository-name)
 # and NOT your User repository (http://yourusername.github.io)
 # then add in the baseurl here, like this: "/repository-name"
-baseurl: ""
+baseurl: "/jatinpurohit.tech"
 
 #
 # !! You don't need to change any of the configuration flags below !!
@@ -76,7 +77,7 @@ kramdown:
 
 # Set the Sass partials directory, as we're using @imports
 sass:
-  style: :expanded # You might prefer to minify using :compressed
+  style: "expanded" # or "compressed" to minify
 
 # Use the following plug-ins
 plugins:
@@ -96,5 +97,4 @@ exclude:
   - Gemfile.lock
   - LICENSE
   - README.md
-  - CNAME
 
