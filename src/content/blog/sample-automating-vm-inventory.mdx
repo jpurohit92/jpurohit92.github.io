@@ -1,0 +1,158 @@
+---
+title: "Sample post: automating a VM inventory report"
+description: A sample article showing how code, tables and headings look on this site. Replace or delete it before publishing.
+date: 2026-11-12
+category: Automation
+tags: [sample, powercli, python, rest-api]
+---
+
+> This is a **sample post** written to preview the blog layout. The technique is real, but treat it as a template: replace it with your own writing, or delete this file, before you publish.
+
+Almost every team that runs virtualised infrastructure ends up with the same request: *"can you send me a list of all the VMs, who owns them, and how big they are?"* Doing that by hand once is fine. Doing it every month is a task worth automating.
+
+This post walks through three small ways to produce the same report, and ends with how I'd choose between them.
+
+## What we're building
+
+The goal is a CSV file with one row per virtual machine. For each VM we want:
+
+- the name and power state
+- the number of vCPUs and the amount of memory
+- the date the report was generated, so old copies are easy to spot
+
+Keeping the output this simple means it opens anywhere, from a spreadsheet to a script.
+
+## Option 1: PowerCLI
+
+If your team already lives in PowerShell, [PowerCLI](https://developer.broadcom.com/powercli) is the shortest path. The whole report is one pipeline.
+
+```powershell title="Export-VmInventory.ps1"
+param(
+    [Parameter(Mandatory)] [string] $Server,
+    [string] $Path = "./vm-inventory-$(Get-Date -Format 'yyyy-MM-dd').csv"
+)
+
+# Credentials come from the environment, never from the script itself.
+$credential = [pscredential]::new(
+    $env:VC_USER,
+    (ConvertTo-SecureString $env:VC_PASSWORD -AsPlainText -Force)
+)
+
+Connect-VIServer -Server $Server -Credential $credential | Out-Null
+
+Get-VM |
+    Select-Object Name, PowerState, NumCpu, MemoryGB |
+    Sort-Object Name |
+    Export-Csv -Path $Path -NoTypeInformation
+
+Disconnect-VIServer -Confirm:$false
+Write-Host "Wrote $Path"
+```
+
+It's readable, and anyone who knows PowerShell can extend it. The trade-off is that it needs PowerCLI installed wherever it runs.
+
+## Option 2: Python and the REST API
+
+If the report needs to run somewhere lightweight, such as a container or a CI job, calling the REST API directly avoids installing a module. The pattern is always the same: create a session, use the session ID on every request, then clean up.
+
+### Create a session
+
+```bash title="session.sh"
+# POST /api/session returns a quoted session ID (curl -s keeps the output clean).
+SESSION_ID=$(curl -sk -X POST "https://$VC_HOST/api/session" \
+  -u "$VC_USER:$VC_PASSWORD" | tr -d '"')
+
+echo "Session created: ${SESSION_ID:0:8}…"
+```
+
+### Fetch the VMs and write the CSV
+
+```python title="vm_inventory.py"
+import csv
+import os
+from datetime import date
+
+import requests
+
+HOST = os.environ["VC_HOST"]
+BASE = f"https://{HOST}/api"
+
+
+def main() -> None:
+    # verify=False is only acceptable for a lab. Use a trusted CA bundle in production.
+    session = requests.Session()
+    session.verify = False
+
+    token = session.post(f"{BASE}/session", auth=(os.environ["VC_USER"], os.environ["VC_PASSWORD"]))
+    token.raise_for_status()
+    session.headers["vmware-api-session-id"] = token.json()
+
+    vms = session.get(f"{BASE}/vcenter/vm")
+    vms.raise_for_status()
+
+    path = f"vm-inventory-{date.today():%Y-%m-%d}.csv"
+    with open(path, "w", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["name", "power_state", "cpu_count", "memory_size_MiB"],
+            extrasaction="ignore",
+        )
+        writer.writeheader()
+        writer.writerows(sorted(vms.json(), key=lambda vm: vm["name"]))
+
+    print(f"Wrote {path}")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Notice that every request does a `raise_for_status()`. A report that quietly produces an empty file is worse than one that fails loudly.
+
+## Option 3: run it on a schedule
+
+A report nobody remembers to run isn't automation. Once the script works, schedule it. On Kubernetes, a `CronJob` does this in a few lines.
+
+```yaml title="vm-inventory-cronjob.yaml"
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vm-inventory
+spec:
+  schedule: "0 6 1 * *" # 06:00 on the first day of every month
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: report
+              image: registry.example.com/tools/vm-inventory:1.0.0
+              envFrom:
+                - secretRef:
+                    name: vcenter-credentials
+```
+
+Credentials live in a Kubernetes `Secret`, so they never appear in the image or the manifest.
+
+## Choosing between them
+
+| Approach | Best when | You need | Watch out for |
+| --- | --- | --- | --- |
+| PowerCLI | Your team already uses PowerShell | PowerShell and the PowerCLI module | Module versions drifting between machines |
+| REST + Python | It runs in a container or CI job | Python and the `requests` library | Handling sessions and TLS correctly |
+| CronJob | The report must run without anyone | A Kubernetes cluster and a container image | Secrets management and job failure alerts |
+
+There's no single right answer. I'd start with PowerCLI to prove the report is useful, then move to the REST version once it needs to run unattended.
+
+## Things I'd do before relying on this
+
+1. **Keep secrets out of code.** Read them from the environment or a secret store, as in the examples above.
+2. **Verify TLS properly.** Disabling certificate checks is fine in a lab and a risk everywhere else.
+3. **Fail loudly.** Check every response, and alert when a scheduled run fails.
+4. **Version the script.** Treat the report like any other piece of code: review it, test it and tag it.
+
+## Wrapping up
+
+None of this is complicated, and that's the point. A small, well-checked script that runs on a schedule saves far more time than a clever one that only its author understands.

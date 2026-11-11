@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostItem from '../components/PostItem.astro';
+import Icon from '../components/Icon.astro';
+import TermPrompt from '../components/TermPrompt.astro';
+import { getPublishedPosts, pickFeatured } from '../lib/posts';
+import { SITE, SUMMARY_SHORT, url } from '../site';
+
+// Featured Writing: posts flagged `featured`, topped up with the newest (max 3).
+const featured = pickFeatured(await getPublishedPosts(), 3);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  jobTitle: SITE.role,
+  worksFor: { '@type': 'Organization', name: 'Broadcom' },
+  url: new URL(url('/'), Astro.site).href,
+  image: new URL(url(SITE.photo), Astro.site).href,
+  sameAs: [SITE.linkedin, ...(SITE.github ? [SITE.github] : [])],
+};
+---
+<BaseLayout jsonLd={jsonLd}>
+  <div class="home">
+    <aside class="profile">
+      <div class="photo-wrap">
+        <div class="glow"></div>
+        <img src={url(SITE.photo)} alt={`Photo of ${SITE.name}`} width="240" height="240" />
+      </div>
+      <p class="name">{SITE.name}</p>
+      <p class="role">{SITE.role}</p>
+      <p class="company">{SITE.company}</p>
+      <div class="chips">
+        <a class="chip" href={SITE.linkedin}><Icon name="linkedin" />LinkedIn</a>
+        <a class="chip" href={`mailto:${SITE.email}`}><Icon name="mail" />Email</a>
+        {SITE.github && <a class="chip" href={SITE.github}><Icon name="mark-github" />GitHub</a>}
+      </div>
+    </aside>
+
+    <section class="intro" aria-labelledby="intro-title">
+      <h1 id="intro-title" class="term-h1 term-step">Hi, I'm <span class="grad-text">{SITE.name.split(' ')[0]}</span>.</h1>
+      <p class="term-line term-step" aria-hidden="true">
+        <TermPrompt />
+        <span data-cmd>cat intro.md</span>
+      </p>
+      <div class="term-text term-step">
+        {SUMMARY_SHORT.map((p) => <p>{p}</p>)}
+      </div>
+    </section>
+
+    {featured.length > 0 && (
+      <section class="featured term-reveal" style="--d: 0.1s" aria-labelledby="featured-heading">
+        <div class="featured-head">
+          <h2 id="featured-heading">Featured writing</h2>
+          <a href={url('/blog')}>All writing <Icon name="arrow-right" /></a>
+        </div>
+        <ul class="post-list">
+          {featured.map((p) => <PostItem post={p} as="h3" showTags={false} />)}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  // Shell intro: show heading, type `cat intro.md`, dump intro. No whoami / idle prompt.
+  // Layout reserved from the start. Reduced-motion skips (BaseLayout). Click / Esc finishes.
+  const root = document.documentElement;
+  const ready = () => root.classList.add('tw-ready');
+
+  const steps = [...document.querySelectorAll<HTMLElement>('.term-step')];
+  const cmdEl = document.querySelector<HTMLElement>('[data-cmd]');
+
+  if (!root.classList.contains('js-typewriter') || steps.length !== 3 || !cmdEl) {
+    ready();
+  } else {
+    const [heading, cmdLine, output] = steps;
+    const KEYSTROKE_MS = [35, 60];
+    const ENTER_MS = 150;
+
+    const caret = document.createElement('span');
+    caret.className = 'tw-caret';
+
+    let original = '';
+    const split = (el: HTMLElement) => {
+      original = (el.textContent ?? '').trim();
+      const typed = document.createElement('span');
+      const chars = [...original].map((ch) => {
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.textContent = ch;
+        typed.append(span);
+        return span;
+      });
+      el.replaceChildren(typed);
+      return { typed, chars };
+    };
+
+    const timeline: { t: number; run: () => void }[] = [];
+    let clock = 0;
+    const at = (delay: number, run: () => void) => {
+      clock += delay;
+      timeline.push({ t: clock, run });
+    };
+
+    const cmd = split(cmdEl);
+
+    at(80, () => { heading.classList.add('on'); });
+    at(180, () => { cmdLine.classList.add('on'); cmd.typed.prepend(caret); });
+    for (const span of cmd.chars) {
+      at(KEYSTROKE_MS[0] + Math.random() * (KEYSTROKE_MS[1] - KEYSTROKE_MS[0]), () => {
+        span.classList.add('on');
+        span.after(caret);
+      });
+    }
+    at(ENTER_MS, () => {
+      caret.remove();
+      cmdEl.textContent = original;
+      output.classList.add('on');
+      root.classList.add('tw-done');
+    });
+
+    const begin = () => {
+      ready();
+      let next = 0;
+      let timer = 0;
+      const start = performance.now();
+      const stop = () => {
+        clearInterval(timer);
+        removeEventListener('keydown', onKey);
+        document.removeEventListener('click', finish);
+      };
+      const finish = () => {
+        stop();
+        while (next < timeline.length) timeline[next++].run();
+      };
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') finish(); };
+      timer = window.setInterval(() => {
+        const elapsed = performance.now() - start;
+        while (next < timeline.length && timeline[next].t <= elapsed) timeline[next++].run();
+        if (next >= timeline.length) stop();
+      }, 16);
+      addEventListener('keydown', onKey);
+      document.addEventListener('click', finish);
+    };
+    Promise.race([
+      Promise.all([
+        document.fonts.load('400 18px "JetBrainsMono Nerd Font"'),
+        document.fonts.load('700 38px "JetBrainsMono Nerd Font"'),
+      ]),
+      new Promise((resolve) => setTimeout(resolve, 1200)),
+    ]).then(begin, begin);
+  }
+</script>

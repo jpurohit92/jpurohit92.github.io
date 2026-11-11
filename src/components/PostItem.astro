@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+import { formatDate, readingLabel, readingMinutes, type Post } from '../lib/posts';
+import { url } from '../site';
+
+interface Props { post: Post; as?: 'h2' | 'h3'; showTags?: boolean; }
+const { post, as: Heading = 'h2', showTags = true } = Astro.props;
+const { title, description, date, category, tags } = post.data;
+const minutes = readingMinutes(post.body);
+---
+<li class="post-item" data-category={category ?? ''} data-tags={tags.join('|')}>
+  <p class="post-meta">
+    {category && <span class="cat"><Icon name="tag" />{category}</span>}
+    <span class="meta-item"><Icon name="calendar" /><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></span>
+    <span class="meta-item"><Icon name="clock" />{readingLabel(minutes)}</span>
+  </p>
+  <Heading><a href={url(`/blog/${post.id}/`)}>{title}</a></Heading>
+  <p>{description}</p>
+  {showTags && tags.length > 0 && (
+    <ul class="tags" aria-label="Tags" style="list-style:none;margin:0;padding:0">
+      {tags.map((t) => <li class="tag">{t}</li>)}
+    </ul>
+  )}
+</li>

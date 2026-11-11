@@ -1,0 +1,15 @@
+---
+import Icon from './Icon.astro';
+import { SITE, url } from '../site';
+---
+<footer class="site-footer">
+  <div class="inner">
+    <span>© {new Date().getFullYear()} {SITE.name}</span>
+    <nav aria-label="Footer">
+      <a href={SITE.linkedin}><Icon name="linkedin" />LinkedIn</a>
+      {SITE.github && <a href={SITE.github}><Icon name="mark-github" />GitHub</a>}
+      <a href={`mailto:${SITE.email}`}><Icon name="mail" />Email</a>
+      <a href={url('/rss.xml')}><Icon name="rss" />RSS</a>
+    </nav>
+  </div>
+</footer>

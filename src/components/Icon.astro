@@ -1,0 +1,30 @@
+---
+// Flat Octicon (https://primer.style/foundations/icons). Decorative by default
+// (aria-hidden): the visible label next to it carries the meaning. Pass `label` when
+// the icon stands alone. Colour comes from `currentColor`.
+import { BRAND_ICONS, iconPath } from '../lib/octicon.mjs';
+
+interface Props {
+  name: string;
+  size?: 16 | 24;
+  label?: string;
+  class?: string;
+}
+const { name, size = 16, label, class: className } = Astro.props;
+// Brand marks (e.g. LinkedIn) are 24-unit glyphs scaled down to `size`; Octicons use their own grid.
+const brand = BRAND_ICONS[name as keyof typeof BRAND_ICONS];
+const grid = brand ? 24 : size;
+const markup = brand ? `<path d="${brand}"/>` : iconPath(name, size);
+---
+<svg
+  class:list={['octicon', `octicon-${name}`, className]}
+  viewBox={`0 0 ${grid} ${grid}`}
+  width={size}
+  height={size}
+  fill="currentColor"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={(label ? `<title>${label}</title>` : '') + markup}
+/>

@@ -1,0 +1,30 @@
+---
+import Icon from './Icon.astro';
+// Reader preferences. State lives in localStorage["reading"] and is applied to <html>
+// (data-size / data-width) by the inline script in BaseLayout; this only renders the UI.
+// Hidden until JS runs, since without JS it can't do anything.
+---
+<div class="prefs-wrap" data-prefs hidden>
+  <details class="prefs">
+    <summary aria-label="Reading preferences"><Icon name="typography" /> <span>Text</span></summary>
+    <div class="prefs-panel">
+      <fieldset>
+        <legend>Text size</legend>
+        <div class="prefs-options">
+          <button type="button" data-pref="size" data-value="sm" aria-label="Small text" aria-pressed="false">A−</button>
+          <button type="button" data-pref="size" data-value="md" aria-label="Default text size" aria-pressed="true">A</button>
+          <button type="button" data-pref="size" data-value="lg" aria-label="Large text" aria-pressed="false">A+</button>
+        </div>
+      </fieldset>
+      <fieldset class="prefs-width">
+        <legend>Reading width</legend>
+        <div class="prefs-options">
+          <button type="button" data-pref="width" data-value="narrow" aria-pressed="false">Narrow</button>
+          <button type="button" data-pref="width" data-value="md" aria-pressed="true">Medium</button>
+          <button type="button" data-pref="width" data-value="full" aria-pressed="false">Wide</button>
+        </div>
+      </fieldset>
+      <button type="button" class="prefs-reset" data-prefs-reset>Reset to defaults</button>
+    </div>
+  </details>
+</div>

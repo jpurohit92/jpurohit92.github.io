@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, SUMMARY, url } from '../site';
+
+// Source: LinkedIn profile.
+const experience = [
+  { role: 'Principal Technical Marketing Engineer', org: 'Broadcom (VMware Cloud Foundation)', when: 'Nov 2023 – Present · Bengaluru, India', text: 'Works at the intersection of product, engineering, developers, customers and go-to-market teams, focused on developer experience, APIs, SDKs, CLI/PowerCLI, OpenAPI, automation and private cloud.' },
+  { role: 'Sr. Technical Marketing Architect', org: 'VMware', when: 'Feb 2023 – Nov 2023 · Pune, India', text: '' },
+  { role: 'Sr. Technical Marketing Manager', org: 'VMware', when: 'Jul 2020 – Feb 2023 · India', text: 'Produced technical marketing content to improve the information experience of customers, partners and field engineers.' },
+  { role: 'Sr. Engineer, Product Engineering', org: 'Sungard Availability Services', when: 'Nov 2018 – Jul 2020 · Pune, India', text: 'Part of the product engineering group, responsible for engineering the infrastructure stack for the disaster recovery product portfolio.' },
+  { role: 'Cloud and Virtualization Engineer', org: 'Barclays Investment Bank', when: 'Jan 2018 – Nov 2018 · Pune, India', text: '' },
+  { role: 'Project Engineer, VMware', org: 'Wipro', when: 'Oct 2014 – Jan 2018', text: 'Data centre virtualization.' },
+];
+const certifications = [
+  'VMware Certified Advanced Professional 6 – Data Center Virtualization Deployment',
+  'KCNA: Kubernetes and Cloud Native Associate',
+  'VMware Certified Associate 6 – Data Center Virtualization',
+  'VMUG Leader',
+];
+const skills = ['Technology Marketing', 'Product Marketing', 'Technical Marketing'];
+---
+<BaseLayout title="About" description={SUMMARY[0]}>
+  <div class="page">
+    <h1 class="page-title">About <span class="grad-text">me</span></h1>
+
+    <div class="about-summary">
+      {SUMMARY.map((p) => <p>{p}</p>)}
+    </div>
+
+    <section class="section">
+      <h2><Icon name="briefcase" />Experience</h2>
+      <ol class="timeline">
+        {experience.map((e) => (
+          <li>
+            <h3>{e.role} · <span class="org">{e.org}</span></h3>
+            <div class="when"><Icon name="calendar" />{e.when}</div>
+            {e.text && <p>{e.text}</p>}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2><Icon name="verified" />Certifications &amp; community</h2>
+      <ul class="list">
+        {certifications.map((c) => <li>{c}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2><Icon name="book" />Education</h2>
+      <ul class="list">
+        <li><strong>SRM University</strong> · Bachelor of Technology (B.Tech.), Software Engineering · 2010 – 2014</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2><Icon name="star" />Top skills</h2>
+      <div class="tags">{skills.map((s) => <span class="tag">{s}</span>)}</div>
+    </section>
+
+    <section class="section">
+      <h2><Icon name="comment" />Get in touch</h2>
+      <div class="cta" style="margin-top:0">
+        <a class="btn" href={`mailto:${SITE.email}`}><Icon name="mail" />Email me</a>
+        <a class="btn" href={SITE.linkedin}><Icon name="linkedin" />LinkedIn</a>
+        <a class="btn" href={url('/blog')}><Icon name="book" />Read the blog</a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

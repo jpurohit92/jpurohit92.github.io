@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import { SITE, NAV, url } from '../site';
+
+const base = url('/').replace(/\/$/, '');
+const path = Astro.url.pathname.replace(/\/$/, '');
+const isActive = (href: string) => {
+  const full = href === '/' ? base : url(href);
+  return href === '/' ? path === full : path === full || path.startsWith(full + '/');
+};
+---
+<header class="site-header">
+  <div class="inner">
+    <a class="site-brand" href={url('/')}>{SITE.name}</a>
+    <nav class="site-nav" aria-label="Main">
+      {NAV.map((n) => (
+        <a href={url(n.href)} aria-current={isActive(n.href) ? 'page' : undefined}><Icon name={n.icon} />{n.label}</a>
+      ))}
+    </nav>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light and dark theme">
+      <Icon name="sun" class="i-sun" />
+      <Icon name="moon" class="i-moon" />
+    </button>
+  </div>
+</header>
+<script is:inline>
+  // Publish the sticky header's real height (it wraps on small screens) so anchors, the
+  // table of contents and the home profile can sit just below it.
+  (function () {
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+    var set = function () { document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px'); };
+    set();
+    addEventListener('resize', set);
+    if ('ResizeObserver' in window) new ResizeObserver(set).observe(header);
+  })();
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+</script>

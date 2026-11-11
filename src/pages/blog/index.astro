@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostItem from '../../components/PostItem.astro';
+import Icon from '../../components/Icon.astro';
+import { categoryFacets, getPublishedPosts, tagFacets } from '../../lib/posts';
+import { CATEGORIES } from '../../site';
+
+const posts = await getPublishedPosts();
+const counts = new Map(categoryFacets(posts).map((c) => [c.name, c.count]));
+// Listed categories first (even with 0 posts), then any category used by a post but not listed.
+const categories = [
+  ...CATEGORIES.map((c) => ({ name: c.name, icon: c.icon, count: counts.get(c.name) ?? 0 })),
+  ...[...counts].filter(([name]) => !CATEGORIES.some((c) => c.name === name)).map(([name, count]) => ({ name, icon: 'file-directory', count })),
+];
+const tags = tagFacets(posts);
+const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 0);
+---
+<BaseLayout
+  title="Writing"
+  description="Practical notes on cloud infrastructure, automation and developer experience by Jatin Purohit."
+>
+  <div class="blog-layout">
+  {showFilters && (
+    <aside class="filters" aria-label="Filter posts" data-filters hidden>
+      {categories.length > 0 && (
+        <div class="filter-group" role="group" aria-labelledby="filter-cat">
+          <p class="filter-label" id="filter-cat"><Icon name="tag" />Categories</p>
+          <div class="filter-buttons filter-buttons--list">
+            <button type="button" data-kind="category" data-value="" aria-pressed="true"><Icon name="apps" /><span class="label">All</span> <span class="count">{posts.length}</span></button>
+            {categories.map((c) => (
+              <button type="button" data-kind="category" data-value={c.name} aria-pressed="false"><Icon name={c.icon} /><span class="label">{c.name}</span> <span class="count">{c.count}</span></button>
+            ))}
+          </div>
+        </div>
+      )}
+      {tags.length > 0 && (
+        <div class="filter-group" role="group" aria-labelledby="filter-tag">
+          <p class="filter-label" id="filter-tag"><Icon name="tag" />Tags</p>
+          <div class="filter-buttons">
+            {tags.map((t) => (
+              <button type="button" data-kind="tag" data-value={t.name} aria-pressed="false">{t.name} <span class="count">{t.count}</span></button>
+            ))}
+          </div>
+        </div>
+      )}
+      <p class="filter-summary" data-filter-summary hidden>
+        <span data-filter-text></span>
+        <button type="button" class="filter-clear" data-filter-clear>Clear filters</button>
+      </p>
+    </aside>
+  )}
+
+   <div class="surface">
+    <h1 class="page-title">Writing</h1>
+    <p class="page-lead">Practical notes on cloud infrastructure, automation and developer experience.</p>
+
+    {posts.length > 0 ? (
+      <ul class="post-list" style="margin-top:32px">
+        {posts.map((p) => <PostItem post={p} />)}
+      </ul>
+    ) : (
+      <p class="empty">No posts yet. Check back soon.</p>
+    )}
+    <p class="empty" data-filter-empty hidden>No posts match these filters.</p>
+    <p class="sr-only" role="status" aria-live="polite" data-filter-status></p>
+   </div>
+  </div>
+
+  {showFilters && (
+    <script>
+      // Select posts by category and tag. Both filters combine (a post must match both) and the
+      // selection lives in the URL (?category=...&tag=...) so a filtered list can be shared.
+      const root = document.querySelector<HTMLElement>('[data-filters]');
+      if (root) {
+        root.hidden = false;
+        const items = [...document.querySelectorAll<HTMLElement>('.post-item')];
+        const status = document.querySelector<HTMLElement>('[data-filter-status]');
+        const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+        const summary = root.querySelector<HTMLElement>('[data-filter-summary]');
+        const summaryText = root.querySelector<HTMLElement>('[data-filter-text]');
+        const buttons = [...root.querySelectorAll<HTMLButtonElement>('button[data-kind]')];
+        const state = { category: '', tag: '' };
+
+        // Ignore values that don't exist (e.g. a stale link) so the list never ends up blank.
+        const valid = (kind: 'category' | 'tag', value: string) =>
+          buttons.some((b) => b.dataset.kind === kind && b.dataset.value === value);
+        const params = new URLSearchParams(location.search);
+        for (const kind of ['category', 'tag'] as const) {
+          const v = params.get(kind) ?? '';
+          if (v && valid(kind, v)) state[kind] = v;
+        }
+
+        function apply(announce = true) {
+          let shown = 0;
+          for (const el of items) {
+            const tags = (el.dataset.tags ?? '').split('|');
+            const match =
+              (!state.category || el.dataset.category === state.category) &&
+              (!state.tag || tags.includes(state.tag));
+            el.hidden = !match;
+            if (match) shown++;
+          }
+          for (const b of buttons) {
+            const kind = b.dataset.kind as 'category' | 'tag';
+            b.setAttribute('aria-pressed', String(b.dataset.value === state[kind]));
+          }
+          const parts = [
+            state.category && `category “${state.category}”`,
+            state.tag && `tag “${state.tag}”`,
+          ].filter(Boolean);
+          const text = `${shown} ${shown === 1 ? 'post' : 'posts'}${parts.length ? ` in ${parts.join(' and ')}` : ''}`;
+          if (summary && summaryText) {
+            summary.hidden = parts.length === 0;
+            summaryText.textContent = text;
+          }
+          if (empty) empty.hidden = shown !== 0;
+          if (status && announce) status.textContent = text;
+
+          const next = new URLSearchParams();
+          if (state.category) next.set('category', state.category);
+          if (state.tag) next.set('tag', state.tag);
+          const qs = next.toString();
+          history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : ''));
+        }
+
+        root.addEventListener('click', (e) => {
+          const target = e.target as Element;
+          if (target.closest('[data-filter-clear]')) {
+            state.category = '';
+            state.tag = '';
+            apply();
+            return;
+          }
+          const btn = target.closest<HTMLButtonElement>('button[data-kind]');
+          if (!btn) return;
+          const kind = btn.dataset.kind as 'category' | 'tag';
+          const value = btn.dataset.value ?? '';
+          // Clicking the selected tag/category again goes back to "All".
+          state[kind] = state[kind] === value ? '' : value;
+          apply();
+        });
+        apply(false);
+      }
+    </script>
+  )}
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import type { MarkdownHeading } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props { headings: MarkdownHeading[]; variant: 'desktop' | 'mobile'; }
+const { headings, variant } = Astro.props;
+
+// H2 are top-level entries; H3 nest under the preceding H2.
+type Item = { slug: string; text: string; children: { slug: string; text: string }[] };
+const items: Item[] = [];
+for (const h of headings) {
+  if (h.depth === 2) items.push({ slug: h.slug, text: h.text, children: [] });
+  else if (h.depth === 3) {
+    if (items.length === 0) items.push({ slug: h.slug, text: h.text, children: [] });
+    else items[items.length - 1].children.push({ slug: h.slug, text: h.text });
+  }
+}
+---
+{variant === 'desktop' ? (
+  <aside class="toc toc-desktop" aria-labelledby="toc-title-d">
+    <p class="toc-title" id="toc-title-d"><Icon name="list-unordered" />On this page</p>
+    <nav aria-labelledby="toc-title-d">
+      <ol>
+        {items.map((i) => (
+          <li>
+            <a href={`#${i.slug}`}>{i.text}</a>
+            {i.children.length > 0 && (
+              <ol>{i.children.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}</ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </aside>
+) : (
+  <details class="toc toc-mobile">
+    <summary><span class="toc-title-inline"><Icon name="list-unordered" />On this page</span></summary>
+    <nav aria-label="Table of contents">
+      <ol>
+        {items.map((i) => (
+          <li>
+            <a href={`#${i.slug}`}>{i.text}</a>
+            {i.children.length > 0 && (
+              <ol>{i.children.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}</ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </details>
+)}

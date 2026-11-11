@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../site';
+
+// Source: LinkedIn profile. Add real projects here as you publish them.
+const kindIcon: Record<string, string> = { Publication: 'book', Speaking: 'megaphone', Community: 'people' };
+const items = [
+  { kind: 'Publication', title: 'Don’t Fear the Shell: PowerShell and automation', text: 'A published piece on PowerShell and automation.', meta: '' },
+  { kind: 'Speaking', title: 'VMware Explore', text: 'Conference speaker.', meta: '' },
+  { kind: 'Speaking', title: 'Oracle CloudWorld', text: 'Conference speaker.', meta: '' },
+  { kind: 'Community', title: 'VMUG', text: 'VMUG Leader and speaker.', meta: '' },
+];
+---
+<BaseLayout title="Projects" description="Writing, talks and community work by Jatin Purohit.">
+  <div class="page">
+    <h1 class="page-title">Projects</h1>
+    <p class="page-lead">Writing, talks and community work. I've presented on private cloud, automation, developer experience and modern infrastructure platforms.</p>
+
+    <div class="grid" style="margin-top:40px">
+      {items.map((i) => (
+        <div class="card">
+          <span class="tag"><Icon name={kindIcon[i.kind] ?? 'repo'} />{i.kind}</span>
+          <h3>{i.title}</h3>
+          <p>{i.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <p style="margin-top:40px;color:var(--muted)">
+      More coming soon. Follow along on <a href={SITE.linkedin}>LinkedIn</a>.
+    </p>
+  </div>
+</BaseLayout>
