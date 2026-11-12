@@ -13,7 +13,6 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     // e.g. Cloud Infrastructure, Developer Experience, Automation, Kubernetes, AI Infrastructure, Engineering
     category: z.string().optional(),
-    featured: z.boolean().default(false),
     draft: z.boolean().default(false),
   }),
 });

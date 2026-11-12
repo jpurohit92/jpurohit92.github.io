@@ -8,13 +8,6 @@ export async function getPublishedPosts(): Promise<Post[]> {
   return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-/** Up to `limit` posts: those marked `featured`, topped up with the newest posts. */
-export function pickFeatured(posts: Post[], limit = 3): Post[] {
-  const featured = posts.filter((p) => p.data.featured);
-  const rest = posts.filter((p) => !p.data.featured);
-  return [...featured, ...rest].slice(0, limit);
-}
-
 /** Dates are stored as UTC midnight, so format in UTC to avoid off-by-one days. */
 export function formatDate(date: Date, style: 'long' | 'short' = 'long'): string {
   return date.toLocaleDateString('en-US', {

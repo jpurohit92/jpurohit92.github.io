@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostItem from '../components/PostItem.astro';
 import Icon from '../components/Icon.astro';
 import TermPrompt from '../components/TermPrompt.astro';
-import { getPublishedPosts, pickFeatured } from '../lib/posts';
+import { getPublishedPosts } from '../lib/posts';
 import { SITE, SUMMARY_SHORT, url } from '../site';
 
-// Featured Writing: posts flagged `featured`, topped up with the newest (max 3).
-const featured = pickFeatured(await getPublishedPosts(), 3);
+// Home listing: newest two published posts.
+const latest = (await getPublishedPosts()).slice(0, 2);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -48,14 +48,14 @@ const jsonLd = {
       </div>
     </section>
 
-    {featured.length > 0 && (
+    {latest.length > 0 && (
       <section class="featured term-reveal" style="--d: 0.1s" aria-labelledby="featured-heading">
         <div class="featured-head">
-          <h2 id="featured-heading">Featured writing</h2>
+          <h2 id="featured-heading">Latest writing</h2>
           <a href={url('/blog')}>All writing <Icon name="arrow-right" /></a>
         </div>
         <ul class="post-list">
-          {featured.map((p) => <PostItem post={p} as="h3" showTags={false} />)}
+          {latest.map((p) => <PostItem post={p} as="h3" showTags={false} />)}
         </ul>
       </section>
     )}
