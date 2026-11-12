@@ -1,12 +1,22 @@
 ---
-title: "Sample post: automating a VM inventory report"
-description: A sample article showing how code, tables and headings look on this site. Replace or delete it before publishing.
+# Copy this file into src/content/blog/, rename it (e.g. my-topic.mdx), then fill these in.
+title: "Your post title"
+description: One or two sentences for the listing page and SEO.
 date: 2026-11-12
+# updated: 2026-11-13
 category: Automation
-tags: [sample, powercli, python, rest-api]
+# Categories used on the site: Automation, Engineering, Cloud Infrastructure,
+# Developer Experience, Kubernetes, AI Infrastructure
+tags: [powercli, python, rest-api]
+# featured: true
+# draft: true
 ---
 
-> This is a **sample post** written to preview the blog layout. The technique is real, but treat it as a template: replace it with your own writing, or delete this file, before you publish.
+> **Authoring template** — not published. To write a new post:
+> 1. Copy `templates/blog-post.mdx` → `src/content/blog/<slug>.mdx`
+> 2. Update the frontmatter (`title`, `description`, `date`, `category`, `tags`)
+> 3. Replace the body with your content (headings, code, tables, and lists below show what the layout supports)
+> 4. Preview with `npm run dev`, then commit and push to publish
 
 Almost every team that runs virtualised infrastructure ends up with the same request: *"can you send me a list of all the VMs, who owns them, and how big they are?"* Doing that by hand once is fine. Doing it every month is a task worth automating.
 
