@@ -63,6 +63,7 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
       <p class="empty">No posts yet. Check back soon.</p>
     )}
     <p class="empty" data-filter-empty hidden>No posts match these filters.</p>
+    <nav class="pager" aria-label="Pagination" data-pager hidden></nav>
     <p class="sr-only" role="status" aria-live="polite" data-filter-status></p>
    </div>
   </div>
@@ -80,7 +81,10 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
         const summary = root.querySelector<HTMLElement>('[data-filter-summary]');
         const summaryText = root.querySelector<HTMLElement>('[data-filter-text]');
         const buttons = [...root.querySelectorAll<HTMLButtonElement>('button[data-kind]')];
-        const state = { category: '', tag: '' };
+        const PAGE_SIZE = 5;
+        const pager = document.querySelector<HTMLElement>('[data-pager]');
+        const list = document.querySelector<HTMLElement>('.post-list');
+        const state = { category: '', tag: '', page: 1 };
 
         // Ignore values that don't exist (e.g. a stale link) so the list never ends up blank.
         const valid = (kind: 'category' | 'tag', value: string) =>
@@ -90,17 +94,65 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
           const v = params.get(kind) ?? '';
           if (v && valid(kind, v)) state[kind] = v;
         }
+        const pageParam = parseInt(params.get('page') ?? '', 10);
+        if (pageParam > 1) state.page = pageParam;
 
-        function apply(announce = true) {
-          let shown = 0;
-          for (const el of items) {
-            const tags = (el.dataset.tags ?? '').split('|');
-            const match =
-              (!state.category || el.dataset.category === state.category) &&
-              (!state.tag || tags.includes(state.tag));
-            el.hidden = !match;
-            if (match) shown++;
+        // Page numbers to show: first, last, and the current page with one neighbour each side.
+        const pageNumbers = (current: number, total: number) => {
+          const set = new Set([1, total, current - 1, current, current + 1].filter((n) => n >= 1 && n <= total));
+          const sorted = [...set].sort((a, b) => a - b);
+          const out: (number | '…')[] = [];
+          sorted.forEach((n, i) => {
+            if (i > 0 && n - sorted[i - 1] > 1) out.push('…');
+            out.push(n);
+          });
+          return out;
+        };
+
+        function renderPager(total: number) {
+          if (!pager) return;
+          pager.hidden = total <= 1;
+          pager.replaceChildren();
+          if (total <= 1) return;
+          const btn = (label: string, page: number, opts: { current?: boolean; disabled?: boolean; aria?: string } = {}) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = label;
+            b.dataset.page = String(page);
+            if (opts.aria) b.setAttribute('aria-label', opts.aria);
+            if (opts.current) b.setAttribute('aria-current', 'page');
+            if (opts.disabled) b.disabled = true;
+            return b;
+          };
+          pager.append(btn('← Previous', state.page - 1, { disabled: state.page === 1, aria: 'Previous page' }));
+          for (const n of pageNumbers(state.page, total)) {
+            if (n === '…') {
+              const s = document.createElement('span');
+              s.className = 'gap';
+              s.textContent = '…';
+              pager.append(s);
+            } else {
+              pager.append(btn(String(n), n, { current: n === state.page, aria: `Page ${n}` }));
+            }
           }
+          pager.append(btn('Next →', state.page + 1, { disabled: state.page === total, aria: 'Next page' }));
+        }
+
+        function apply(announce = true, scroll = false) {
+          const matched = items.filter((el) => {
+            const tags = (el.dataset.tags ?? '').split('|');
+            return (
+              (!state.category || el.dataset.category === state.category) &&
+              (!state.tag || tags.includes(state.tag))
+            );
+          });
+          const shown = matched.length;
+          const totalPages = Math.max(1, Math.ceil(shown / PAGE_SIZE));
+          state.page = Math.min(Math.max(1, state.page), totalPages);
+          const visible = new Set(matched.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE));
+          for (const el of items) el.hidden = !visible.has(el);
+          renderPager(totalPages);
+          if (scroll) list?.scrollIntoView({ block: 'start' });
           for (const b of buttons) {
             const kind = b.dataset.kind as 'category' | 'tag';
             b.setAttribute('aria-pressed', String(b.dataset.value === state[kind]));
@@ -115,18 +167,27 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
             summaryText.textContent = text;
           }
           if (empty) empty.hidden = shown !== 0;
-          if (status && announce) status.textContent = text;
+          if (status && announce) status.textContent = totalPages > 1 ? `${text}, page ${state.page} of ${totalPages}` : text;
 
           const next = new URLSearchParams();
           if (state.category) next.set('category', state.category);
           if (state.tag) next.set('tag', state.tag);
+          if (state.page > 1) next.set('page', String(state.page));
           const qs = next.toString();
           history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : ''));
         }
 
+        pager?.addEventListener('click', (e) => {
+          const b = (e.target as Element).closest<HTMLButtonElement>('button[data-page]');
+          if (!b || b.disabled) return;
+          state.page = Number(b.dataset.page);
+          apply(true, true);
+        });
+
         root.addEventListener('click', (e) => {
           const target = e.target as Element;
           if (target.closest('[data-filter-clear]')) {
+            state.page = 1;
             state.category = '';
             state.tag = '';
             apply();
@@ -138,6 +199,7 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
           const value = btn.dataset.value ?? '';
           // Clicking the selected tag/category again goes back to "All".
           state[kind] = state[kind] === value ? '' : value;
+          state.page = 1; // a filter change starts again from the first page
           apply();
         });
         apply(false);

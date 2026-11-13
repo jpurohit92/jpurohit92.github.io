@@ -303,9 +303,10 @@ html[data-theme='dark'] .intro {
 }
 
 /* ---------- Writing: editorial post list (blog index + home) ---------- */
-.post-list { list-style: none; margin: 0; padding: 0; }
+.post-list { list-style: none; margin: 0; padding: 0; scroll-margin-top: calc(var(--header-h, 72px) + 24px); }
 .post-item { position: relative; padding: 26px 16px; margin: 0 -16px; border-radius: 0; }
-.post-item + .post-item::before { content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px; background: var(--line); }
+/* Divider above every visible item that has a visible item before it (filters/pages hide the rest). */
+.post-item:not([hidden]) ~ .post-item:not([hidden])::before { content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px; background: var(--line); }
 .post-item:hover, .post-item:focus-within { background: var(--glass); }
 .post-item:hover::before, .post-item:focus-within::before,
 .post-item:hover + .post-item::before, .post-item:focus-within + .post-item::before { opacity: 0; }
@@ -349,6 +350,17 @@ html[data-theme='dark'] .intro {
 .filter-summary[hidden] { display: none; }
 .filter-clear { font: inherit; font-size: 14px; padding: 6px 0; cursor: pointer; background: none; border: 0; color: var(--accent); text-decoration: underline; }
 .empty { color: var(--body-text); margin-top: 24px; }
+
+/* Pagination under the blog list. */
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pager[hidden] { display: none; }
+.pager button { font: inherit; font-size: 14px; min-width: 40px; min-height: 40px; padding: 0 14px; cursor: pointer; color: var(--ink); background: var(--card-bg); border: 1px solid var(--glass-line); border-radius: 0; }
+.pager button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pager button[aria-current='page'] { background: var(--ink); color: var(--page-bg); border-color: var(--ink); }
+.pager button:disabled { opacity: 0.4; cursor: default; }
+.pager button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pager .gap { color: var(--muted); padding: 0 4px; }
+@media (max-width: 640px) { .pager button { padding: 0 10px; } }
 
 /* ---------- Home: Featured Writing ---------- */
 .featured { grid-column: 1 / -1; margin-top: 8px; padding-top: 40px; border-top: 1px solid var(--line); }
