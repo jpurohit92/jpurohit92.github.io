@@ -77,7 +77,6 @@ const jsonLd = {
               {tags.map((t) => <li class="tag">{t}</li>)}
             </ul>
           )}
-          <ShareButtons title={title} url={pageUrl} />
         </header>
         {hasToc && <TableOfContents headings={tocHeadings} variant="mobile" />}
       </div>
@@ -85,7 +84,10 @@ const jsonLd = {
 
     <!-- Centre column: only this scrolls on wide screens. -->
     <article class="article-main" aria-labelledby="article-title">
-      <ReadingPrefs />
+      <div class="article-tools">
+        <ShareButtons title={title} url={pageUrl} />
+        <ReadingPrefs />
+      </div>
       <div class="prose" id="article-body"><slot /></div>
     </article>
     {hasToc && <TableOfContents headings={tocHeadings} variant="desktop" />}

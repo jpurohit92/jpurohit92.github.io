@@ -82,7 +82,9 @@ html[data-width='narrow'] .article-layout { --measure-n: 30; }
 .article-tags .tag { color: var(--muted); }
 
 /* ---------- Share ---------- */
-.share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 20px; }
+/* Toolbar at the top of the article card: Share on the left, Reading mode + Text on the right. */
+.article-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; margin: calc(var(--card-pad) * -0.4) 0 1.6em; }
+.share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .share-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .share-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .share-btn {
@@ -98,8 +100,7 @@ html[data-width='narrow'] .article-layout { --measure-n: 30; }
 .share-btn[data-state='copied'] .share-icon-check { display: block; }
 
 /* ---------- Reader preferences ---------- */
-/* Toolbar at the top of the article card: Reading mode + Text. */
-.prefs-wrap { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: calc(var(--card-pad) * -0.4) 0 1.6em; }
+.prefs-wrap { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin-left: auto; }
 .prefs-wrap[hidden] { display: none; }
 .prefs { position: relative; }
 .focus-toggle,
@@ -147,8 +148,39 @@ html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) {
 html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop):focus-within {
   filter: none; opacity: 1; transition-duration: 0.2s;
 }
+
+/* In reading mode the page behind the article is always black and the article card is always
+   white, whichever site theme is active. The root gets the dark tokens (so the blurred chrome
+   reads correctly on black) and the card gets the light tokens. */
+html.reading-mode:root {
+  --page-bg: #000000; --ink: #f1f5f9; --muted: #a0aec0; --line: #2e3150; --accent: #818cf8; --accent-soft: #1e1b4b;
+  --glass: rgba(255, 255, 255, 0.06); --glass-hover: rgba(255, 255, 255, 0.12); --glass-line: rgba(255, 255, 255, 0.16);
+  --header-bg: rgba(0, 0, 0, 0.72); --header-line: rgba(255, 255, 255, 0.1);
+  --progress-a: #818cf8; --progress-b: #e879f9;
+  --orb-op: 0;
+  color-scheme: dark;
+}
+html.reading-mode .article-main {
+  --page-bg: #ffffff; --ink: #0f172a; --muted: #475569; --line: #e2e8f0; --accent: #4f46e5; --accent-soft: #eef2ff;
+  --lead: #1e293b; --body-text: #334155; --prose: #334155; --prose-2: #475569;
+  --glass: #ffffff; --glass-hover: #f8fafc; --glass-line: rgba(15, 23, 42, 0.14);
+  --code-bg: #f1f5f9; --code-bar: #f6f8fa; --code-border: #d0d7de;
+  --card-bg: #ffffff; --card-border: rgba(255, 255, 255, 0.5);
+  --card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 30px 80px -20px rgba(255, 255, 255, 0.12);
+  color: var(--ink); color-scheme: light;
+}
+.bg span { transition: opacity 2s ease; }
+
+/* While reading mode is switching, colours cross-fade over the same 2s as the blur (class set briefly by JS). */
+html.rm-anim body, html.rm-anim .bg { transition: background-color 2s ease, color 2s ease; }
+html.rm-anim :is(.article-main, .article-main *, .site-header *, .site-footer *, .article-head *, .toc-desktop *) {
+  transition: color 2s ease, background-color 2s ease, border-color 2s ease, box-shadow 2s ease;
+}
+html.rm-anim .site-header { transition: filter 2s ease, opacity 2s ease, background-color 2s ease, border-color 2s ease; }
+
 @media (prefers-reduced-motion: reduce) {
-  .site-header, .site-footer, .article-head, .toc-desktop { transition-duration: 0.01s; }
+  .site-header, .site-footer, .article-head, .toc-desktop, .bg span { transition-duration: 0.01s; }
+  html.rm-anim body, html.rm-anim .bg, html.rm-anim :is(.article-main, .article-main *, .site-header *, .site-footer *, .article-head *, .toc-desktop *) { transition-duration: 0.01s; }
 }
 
 /* ---------- Reading progress ---------- */
@@ -257,9 +289,9 @@ html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop):f
 .code-copy[data-state='copied'] .is-ok { display: block; }
 .code-copy[data-state='failed'] .is-fail { display: block; }
 .code-copy[data-state='copied'] { color: #1a7f37; border-color: #1a7f37; }
-html[data-theme='dark'] .code-copy[data-state='copied'] { color: #56d364; border-color: #56d364; }
+html[data-theme='dark']:not(.reading-mode) .code-copy[data-state='copied'] { color: #56d364; border-color: #56d364; }
 .code-copy[data-state='failed'] { color: #cf222e; border-color: #cf222e; }
-html[data-theme='dark'] .code-copy[data-state='failed'] { color: #ff7b72; border-color: #ff7b72; }
+html[data-theme='dark']:not(.reading-mode) .code-copy[data-state='failed'] { color: #ff7b72; border-color: #ff7b72; }
 
 .prose pre.astro-code, .prose .code-block pre {
   margin: 0; padding: 16px 18px; border: 0; border-radius: 0; overflow-x: auto; tab-size: 2;
@@ -269,8 +301,8 @@ html[data-theme='dark'] .code-copy[data-state='failed'] { color: #ff7b72; border
 .prose pre code { padding: 0; border: 0; background: none; font: inherit; color: inherit; overflow-wrap: normal; white-space: pre; }
 /* A code block with no chrome (e.g. fenced without a language) still needs a frame. */
 .prose > pre.astro-code { margin: 1.9em 0; border: 1px solid var(--code-border); border-radius: 0; }
-html[data-theme='dark'] .astro-code,
-html[data-theme='dark'] .astro-code span { color: var(--shiki-dark) !important; background-color: var(--shiki-dark-bg) !important; }
+html[data-theme='dark']:not(.reading-mode) .astro-code,
+html[data-theme='dark']:not(.reading-mode) .astro-code span { color: var(--shiki-dark) !important; background-color: var(--shiki-dark-bg) !important; }
 .prose pre:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 @media (max-width: 640px) {
   .prose pre.astro-code, .prose .code-block pre { font-size: 13.5px; padding: 14px; }
@@ -292,7 +324,7 @@ html[data-theme='dark'] .astro-code span { color: var(--shiki-dark) !important; 
   .article-main { border: 0; box-shadow: none; padding: 0; }
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }
-  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .share { display: none !important; }
+  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .article-tools { display: none !important; }
   html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) { filter: none; opacity: 1; }
 }
 

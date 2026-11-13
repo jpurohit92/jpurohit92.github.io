@@ -205,7 +205,12 @@ if (prefsRoot) {
   /* ---------- Reading mode: blur everything but the article (styles live in article.css) ---------- */
   const modeBtn = prefsRoot.querySelector<HTMLButtonElement>('[data-reading-mode]');
   const modeLabel = prefsRoot.querySelector<HTMLElement>('[data-reading-mode-label]');
+  let animTimer: number | undefined;
   const setReadingMode = (on: boolean) => {
+    // rm-anim enables the 2s colour cross-fade only while switching, so normal hover effects stay snappy.
+    root.classList.add('rm-anim');
+    clearTimeout(animTimer);
+    animTimer = window.setTimeout(() => root.classList.remove('rm-anim'), 2100);
     root.classList.toggle('reading-mode', on);
     modeBtn?.setAttribute('aria-pressed', String(on));
     if (modeLabel) modeLabel.textContent = on ? 'Exit reading mode' : 'Reading mode';
