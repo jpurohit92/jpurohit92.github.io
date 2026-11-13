@@ -171,6 +171,18 @@ html.reading-mode .article-main {
 }
 .bg span { transition: opacity 2s ease; }
 
+/* Title at the top of the card, revealed in reading mode (grid-rows 0fr -> 1fr animates the height). */
+.reading-title { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 2s ease, opacity 2s ease; }
+.reading-title__inner { min-height: 0; overflow: hidden; }
+.reading-title__inner::after { content: ''; display: block; height: 1.6em; }
+.reading-title__text {
+  margin: 0; padding-bottom: 0.7em; border-bottom: 1px solid var(--line);
+  font-size: 1.9em; line-height: 1.18; letter-spacing: -0.03em; font-weight: 650; color: var(--ink);
+  text-wrap: balance; overflow-wrap: break-word;
+}
+html.reading-mode .reading-title { grid-template-rows: 1fr; opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .reading-title { transition-duration: 0.01s; } }
+
 /* "Press ESC to exit" hint: a white pill centred at the bottom of the screen. It fades/de-blurs in on the same
    2s ease as the page. The border + shadow keep it visible over the white article card as well as the black page.
    Shown briefly when reading mode starts, then again while the pointer is over the article. */
@@ -197,6 +209,7 @@ html.rm-anim body, html.rm-anim .bg { transition: background-color 2s ease, colo
 html.rm-anim :is(.article-main, .article-main *, .site-header *, .site-footer *, .article-head *, .toc-desktop *) {
   transition: color 2s ease, background-color 2s ease, border-color 2s ease, box-shadow 2s ease;
 }
+html.rm-anim .reading-title { transition: grid-template-rows 2s ease, opacity 2s ease; }
 html.rm-anim .site-header { transition: background-color 2s ease, border-color 2s ease; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -345,7 +358,7 @@ html[data-theme='dark']:not(.reading-mode) .astro-code span { color: var(--shiki
   .article-main { border: 0; box-shadow: none; padding: 0; }
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }
-  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .article-tools, .reading-hint { display: none !important; }
+  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .article-tools, .reading-hint, .reading-title { display: none !important; }
   html.reading-mode :is(.site-footer, .article-head, .toc-desktop) { filter: none; opacity: 1; }
 }
 

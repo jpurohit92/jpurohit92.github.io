@@ -88,6 +88,10 @@ const jsonLd = {
         <ShareButtons title={title} url={pageUrl} />
         <ReadingPrefs />
       </div>
+      <!-- Reading mode only: the left column is blurred, so repeat the title at the top of the card (decorative copy). -->
+      <div class="reading-title" aria-hidden="true">
+        <div class="reading-title__inner"><p class="reading-title__text">{title}</p></div>
+      </div>
       <div class="prose" id="article-body"><slot /></div>
     </article>
     {hasToc && <TableOfContents headings={tocHeadings} variant="desktop" />}
