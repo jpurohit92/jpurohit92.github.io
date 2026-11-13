@@ -17,28 +17,40 @@ const headings = article
   : [];
 
 let ticking = false;
+const rootEl = document.documentElement;
 function update() {
   if (!article) return;
+  // In reading mode the page itself doesn't scroll: the article body is its own scroll container.
+  const reading = rootEl.classList.contains('reading-mode');
   const rect = article.getBoundingClientRect();
   const top = rect.top + scrollY;
   const end = top + rect.height;
 
   if (bar) {
-    const span = end - innerHeight - top;
-    const p = span > 0 ? (scrollY - top) / span : scrollY + innerHeight >= end - 4 ? 1 : 0;
+    let p: number;
+    if (reading) {
+      const span = article.scrollHeight - article.clientHeight;
+      p = span > 0 ? article.scrollTop / span : 1;
+    } else {
+      const span = end - innerHeight - top;
+      p = span > 0 ? (scrollY - top) / span : scrollY + innerHeight >= end - 4 ? 1 : 0;
+    }
     bar.style.setProperty('--p', String(Math.min(1, Math.max(0, p))));
   }
 
   if (tocLinks.length && headings.length) {
-    // The active section is the last heading that has passed the top ~third of the viewport.
-    const line = innerHeight * 0.3;
+    // The active section is the last heading that has passed the top ~third of the viewport (or of the reading pane).
+    const line = reading ? rect.top + article.clientHeight * 0.3 : innerHeight * 0.3;
     let current: HTMLElement | undefined;
     for (const h of headings) {
       if (h.getBoundingClientRect().top <= line) current = h;
       else break;
     }
     // At the very bottom, the final section is active even if it is too short to reach the line.
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) current = headings[headings.length - 1];
+    const atEnd = reading
+      ? article.scrollTop + article.clientHeight >= article.scrollHeight - 2
+      : innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+    if (atEnd) current = headings[headings.length - 1];
     const id = current?.id;
     for (const a of tocLinks) {
       if (a.hash.slice(1) === id) a.setAttribute('aria-current', 'location');
@@ -61,6 +73,7 @@ const schedule = () => {
 };
 addEventListener('scroll', schedule, { passive: true });
 addEventListener('resize', schedule);
+article?.addEventListener('scroll', schedule, { passive: true });
 if (article && 'ResizeObserver' in window) new ResizeObserver(schedule).observe(article);
 update();
 
@@ -235,7 +248,21 @@ if (prefsRoot) {
     root.classList.add('rm-anim');
     clearTimeout(animTimer);
     animTimer = window.setTimeout(() => root.classList.remove('rm-anim'), 2100);
+    // Hand the reading position over between the page scroll and the article's own scroll, so nothing jumps.
+    const gap = (document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0) + 16;
+    const carried = !article ? 0 : on
+      ? Math.max(0, gap - article.getBoundingClientRect().top)
+      : article.scrollTop;
     root.classList.toggle('reading-mode', on);
+    if (article) {
+      if (on) {
+        article.scrollTop = carried;
+        scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        scrollTo({ top: Math.max(0, article.getBoundingClientRect().top + scrollY - gap + carried), behavior: 'instant' });
+      }
+    }
+    schedule();
     modeBtn?.setAttribute('aria-pressed', String(on));
     if (modeLabel) modeLabel.textContent = on ? 'Exit reading mode' : 'Reading mode';
     if (status) status.textContent = on ? 'Reading mode on. Press Escape to exit.' : 'Reading mode off';
