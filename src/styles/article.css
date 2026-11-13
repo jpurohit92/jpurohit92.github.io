@@ -81,8 +81,35 @@ html[data-width='narrow'] .article-layout { --measure-n: 30; }
 .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding: 0; list-style: none; }
 .article-tags .tag { color: var(--muted); }
 
+/* ---------- Share ---------- */
+.share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 20px; }
+.share-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.share-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.share-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0;
+  border-radius: 999px; cursor: pointer; color: var(--ink); text-decoration: none;
+  background: var(--glass); border: 1px solid var(--glass-line);
+}
+.share-btn[hidden] { display: none; }
+.share-btn:hover, .share-btn:focus-visible { border-color: var(--accent); color: var(--accent); }
+.share-btn .share-icon-check { display: none; }
+.share-btn[data-state='copied'] { color: var(--accent); border-color: var(--accent); }
+.share-btn[data-state='copied'] .share-icon-link { display: none; }
+.share-btn[data-state='copied'] .share-icon-check { display: block; }
+
 /* ---------- Reader preferences ---------- */
-.prefs-wrap { position: relative; }
+/* Toolbar at the top of the article card: Reading mode + Text. */
+.prefs-wrap { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin: calc(var(--card-pad) * -0.4) 0 1.6em; }
+.prefs-wrap[hidden] { display: none; }
+.prefs { position: relative; }
+.focus-toggle,
+.prefs summary {
+  cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 36px; padding: 0 12px; border-radius: 999px; font: inherit; font-size: 13px; color: var(--ink);
+  background: var(--glass); border: 1px solid var(--glass-line);
+}
+.focus-toggle:hover, .focus-toggle[aria-pressed='true'] { border-color: var(--accent); }
+.focus-toggle[aria-pressed='true'] { color: var(--accent); }
 .prefs summary {
   list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
   min-height: 36px; padding: 0 12px; border-radius: 999px; font-size: 13px; color: var(--ink);
@@ -108,6 +135,21 @@ html[data-width='narrow'] .article-layout { --measure-n: 30; }
 .prefs-reset { font: inherit; font-size: 13px; cursor: pointer; padding: 6px 0; background: none; border: 0; color: var(--accent); text-decoration: underline; }
 /* The width choice only matters in the wide sidebar layout. */
 @media (max-width: 1279px) { .prefs-width { display: none; } }
+
+/* ---------- Reading mode: everything except the article card fades and blurs over 2s ---------- */
+.site-header, .site-footer, .article-head, .toc-desktop {
+  transition: filter 2s ease, opacity 2s ease;
+}
+html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) {
+  filter: blur(8px); opacity: 0.4;
+}
+/* Keyboard users who tab into a blurred area get it back in focus. */
+html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop):focus-within {
+  filter: none; opacity: 1; transition-duration: 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .site-footer, .article-head, .toc-desktop { transition-duration: 0.01s; }
+}
 
 /* ---------- Reading progress ---------- */
 .reading-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100; pointer-events: none; }
@@ -250,7 +292,8 @@ html[data-theme='dark'] .astro-code span { color: var(--shiki-dark) !important; 
   .article-main { border: 0; box-shadow: none; padding: 0; }
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }
-  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back { display: none !important; }
+  .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .share { display: none !important; }
+  html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) { filter: none; opacity: 1; }
 }
 
 /* Separator dots would land at the start of wrapped lines on narrow screens; rely on spacing instead. */

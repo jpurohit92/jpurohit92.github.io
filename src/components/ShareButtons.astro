@@ -1,0 +1,41 @@
+---
+// Share links for an article. Works without JS (plain intent links); JS adds the native
+// share sheet (where supported) and a "copy link" button.
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  url: string;
+}
+const { title, url } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+const links = [
+  { name: 'LinkedIn', icon: 'linkedin', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { name: 'X', icon: 'x', href: `https://twitter.com/intent/tweet?url=${u}&text=${t}` },
+  { name: 'Email', icon: 'mail', href: `mailto:?subject=${t}&body=${u}` },
+];
+---
+<div class="share" data-share data-url={url} data-title={title}>
+  <span class="share-label">Share</span>
+  <ul class="share-list">
+    <li>
+      <button type="button" class="share-btn" data-share-native hidden aria-label="Share this post">
+        <Icon name="share-android" />
+      </button>
+    </li>
+    {links.map((l) => (
+      <li>
+        <a class="share-btn" href={l.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${l.name}`} title={`Share on ${l.name}`}>
+          <Icon name={l.icon} />
+        </a>
+      </li>
+    ))}
+    <li>
+      <button type="button" class="share-btn" data-share-copy hidden aria-label="Copy link" title="Copy link">
+        <Icon name="link" class="share-icon-link" />
+        <Icon name="check" class="share-icon-check" />
+      </button>
+    </li>
+  </ul>
+</div>

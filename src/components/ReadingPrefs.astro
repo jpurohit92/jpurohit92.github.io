@@ -2,9 +2,13 @@
 import Icon from './Icon.astro';
 // Reader preferences. State lives in localStorage["reading"] and is applied to <html>
 // (data-size / data-width) by the inline script in BaseLayout; this only renders the UI.
-// Hidden until JS runs, since without JS it can't do anything.
+// Also hosts the "Reading mode" toggle (html.reading-mode, handled in scripts/article.ts).
+// Rendered at the top of the article card. Hidden until JS runs, since without JS it can't do anything.
 ---
 <div class="prefs-wrap" data-prefs hidden>
+  <button type="button" class="focus-toggle" data-reading-mode aria-pressed="false" title="Focus on the article and blur everything else (Esc to exit)">
+    <Icon name="eye" /> <span data-reading-mode-label>Reading mode</span>
+  </button>
   <details class="prefs">
     <summary aria-label="Reading preferences"><Icon name="typography" /> <span>Text</span></summary>
     <div class="prefs-panel">

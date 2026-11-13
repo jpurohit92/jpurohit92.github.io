@@ -120,6 +120,40 @@ document.addEventListener('click', async (e) => {
   }, 2200));
 });
 
+/* ---------- Share ---------- */
+const shareRoot = document.querySelector<HTMLElement>('[data-share]');
+if (shareRoot) {
+  const shareUrl = shareRoot.dataset.url || location.href;
+  const shareTitle = shareRoot.dataset.title || document.title;
+  const nativeBtn = shareRoot.querySelector<HTMLButtonElement>('[data-share-native]');
+  const copyBtn = shareRoot.querySelector<HTMLButtonElement>('[data-share-copy]');
+
+  if (nativeBtn && typeof navigator.share === 'function') {
+    nativeBtn.hidden = false;
+    nativeBtn.addEventListener('click', async () => {
+      try {
+        await navigator.share({ title: shareTitle, url: shareUrl });
+      } catch { /* dismissed by the user */ }
+    });
+  }
+
+  if (copyBtn) {
+    copyBtn.hidden = false;
+    let timer: number | undefined;
+    copyBtn.addEventListener('click', async () => {
+      let ok = true;
+      try { await copyText(shareUrl); } catch { ok = false; }
+      if (ok) copyBtn.dataset.state = 'copied';
+      if (status) status.textContent = ok ? 'Link copied to clipboard' : 'Could not copy link';
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        delete copyBtn.dataset.state;
+        if (status) status.textContent = '';
+      }, 2200);
+    });
+  }
+}
+
 /* ---------- Reader preferences ---------- */
 const prefsRoot = document.querySelector<HTMLElement>('[data-prefs]');
 if (prefsRoot) {
@@ -167,5 +201,19 @@ if (prefsRoot) {
     if (details.open && !prefsRoot.contains(e.target as Node)) details.open = false;
   });
   sync();
+
+  /* ---------- Reading mode: blur everything but the article (styles live in article.css) ---------- */
+  const modeBtn = prefsRoot.querySelector<HTMLButtonElement>('[data-reading-mode]');
+  const modeLabel = prefsRoot.querySelector<HTMLElement>('[data-reading-mode-label]');
+  const setReadingMode = (on: boolean) => {
+    root.classList.toggle('reading-mode', on);
+    modeBtn?.setAttribute('aria-pressed', String(on));
+    if (modeLabel) modeLabel.textContent = on ? 'Exit reading mode' : 'Reading mode';
+    if (status) status.textContent = on ? 'Reading mode on' : 'Reading mode off';
+  };
+  modeBtn?.addEventListener('click', () => setReadingMode(!root.classList.contains('reading-mode')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && root.classList.contains('reading-mode') && !details.open) setReadingMode(false);
+  });
 }
 void reduceMotion; // smooth scrolling is handled purely in CSS behind prefers-reduced-motion

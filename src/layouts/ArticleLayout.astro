@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import ReadingProgress from '../components/ReadingProgress.astro';
 import ReadingPrefs from '../components/ReadingPrefs.astro';
+import ShareButtons from '../components/ShareButtons.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { formatDate, readingLabel } from '../lib/posts';
 import { SITE, url } from '../site';
@@ -56,7 +57,6 @@ const jsonLd = {
     <div class="article-head">
       <div class="article-top">
         <a class="article-back" href={url('/blog/')}><Icon name="arrow-left" /> All writing</a>
-        <ReadingPrefs />
       </div>
       <div class="article-head-body">
         <header class="article-header">
@@ -77,6 +77,7 @@ const jsonLd = {
               {tags.map((t) => <li class="tag">{t}</li>)}
             </ul>
           )}
+          <ShareButtons title={title} url={pageUrl} />
         </header>
         {hasToc && <TableOfContents headings={tocHeadings} variant="mobile" />}
       </div>
@@ -84,6 +85,7 @@ const jsonLd = {
 
     <!-- Centre column: only this scrolls on wide screens. -->
     <article class="article-main" aria-labelledby="article-title">
+      <ReadingPrefs />
       <div class="prose" id="article-body"><slot /></div>
     </article>
     {hasToc && <TableOfContents headings={tocHeadings} variant="desktop" />}
