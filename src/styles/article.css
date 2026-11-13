@@ -171,28 +171,39 @@ html.reading-mode .article-main {
 }
 .bg span { transition: opacity 2s ease; }
 
-/* Reading mode scroll: the page is locked to the viewport; the card keeps its toolbar and title fixed
-   and only the article text scrolls, with its scrollbar on the card's edge (not the page's). */
+/* Scrolling model. The page itself never scrolls on wide screens: header and footer stay in place, the card keeps
+   its toolbar (and, in reading mode, its title) fixed, and only the article text scrolls, with its scrollbar on the
+   card's own edge. On narrow screens the page scrolls as usual until reading mode is switched on. */
 html { scrollbar-gutter: stable; }
-html.reading-mode { overflow: hidden; }
-html.reading-mode .article-layout { padding-bottom: 24px; align-items: start; }
-html.reading-mode .article-main {
-  display: flex; flex-direction: column; overflow: hidden; align-self: start;
-  height: calc(100vh - var(--header-h, 72px) - 40px - 24px);
-  height: calc(100dvh - var(--header-h, 72px) - 40px - 24px);
+
+/* The article body stretches to the card edges so the scrollbar sits on the card, while the text keeps its padding. */
+@media (min-width: 1280px) {
+  body { height: 100vh; height: 100dvh; overflow: hidden; }
+  main { min-height: 0; }
+  .article-layout { flex: 1 1 auto; min-height: 0; width: 100%; padding-bottom: 24px; grid-template-rows: minmax(0, 1fr); }
+  .article-layout .article-main { display: flex; flex-direction: column; overflow: hidden; align-self: stretch; min-height: 0; }
+  .article-tools, .reading-title { flex: none; }
+  .prose {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: 1em;
+    margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); padding: 0 var(--card-pad) var(--card-pad);
+  }
 }
-html.reading-mode .article-tools, html.reading-mode .reading-title { flex: none; }
-html.reading-mode .prose {
-  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-  /* Stretch to the card edges so the scrollbar sits on the card, while the text keeps its padding. */
-  margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); padding: 0 var(--card-pad) var(--card-pad);
-  scroll-padding-top: 1em;
-}
-/* On narrow screens the title column stacks above the card; in reading mode the card takes the screen instead. */
+
+/* Narrow screens: only reading mode locks the page and gives the card its own scroll; the title block above it is hidden. */
 @media (max-width: 1279px) {
+  html.reading-mode { overflow: hidden; }
   html.reading-mode .article-head { display: none; }
-  html.reading-mode .article-layout { padding-top: 16px; }
-  html.reading-mode .article-main { height: calc(100dvh - var(--header-h, 72px) - 16px - 24px); }
+  html.reading-mode .article-layout { padding: 16px 12px 24px; }
+  html.reading-mode .article-main {
+    display: flex; flex-direction: column; overflow: hidden; align-self: start;
+    height: calc(100vh - var(--header-h, 72px) - 16px - 24px);
+    height: calc(100dvh - var(--header-h, 72px) - 16px - 24px);
+  }
+  html.reading-mode .article-tools, html.reading-mode .reading-title { flex: none; }
+  html.reading-mode .prose {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: 1em;
+    margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); padding: 0 var(--card-pad) var(--card-pad);
+  }
 }
 
 /* Title at the top of the card, revealed in reading mode (grid-rows 0fr -> 1fr animates the height). */
@@ -379,6 +390,8 @@ html[data-theme='dark']:not(.reading-mode) .astro-code span { color: var(--shiki
 .copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media print {
+  body { height: auto !important; overflow: visible !important; }
+  .article-main, .prose { display: block !important; height: auto !important; overflow: visible !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
   .article-main { border: 0; box-shadow: none; padding: 0; }
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }

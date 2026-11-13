@@ -18,10 +18,12 @@ const headings = article
 
 let ticking = false;
 const rootEl = document.documentElement;
+const wide = matchMedia('(min-width: 1280px)');
+// The article body is its own scroll container on wide screens, and in reading mode on any screen.
+const innerScroll = () => wide.matches || rootEl.classList.contains('reading-mode');
 function update() {
   if (!article) return;
-  // In reading mode the page itself doesn't scroll: the article body is its own scroll container.
-  const reading = rootEl.classList.contains('reading-mode');
+  const reading = innerScroll();
   const rect = article.getBoundingClientRect();
   const top = rect.top + scrollY;
   const end = top + rect.height;
@@ -73,6 +75,7 @@ const schedule = () => {
 };
 addEventListener('scroll', schedule, { passive: true });
 addEventListener('resize', schedule);
+wide.addEventListener('change', schedule);
 article?.addEventListener('scroll', schedule, { passive: true });
 if (article && 'ResizeObserver' in window) new ResizeObserver(schedule).observe(article);
 update();
@@ -250,16 +253,18 @@ if (prefsRoot) {
     animTimer = window.setTimeout(() => root.classList.remove('rm-anim'), 2100);
     // Hand the reading position over between the page scroll and the article's own scroll, so nothing jumps.
     const gap = (document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0) + 16;
-    const carried = !article ? 0 : on
-      ? Math.max(0, gap - article.getBoundingClientRect().top)
-      : article.scrollTop;
+    // On wide screens the article scrolls inside the card either way, so there is no position to hand over.
+    const handOver = !!article && !wide.matches;
+    const carried = !handOver ? 0 : on
+      ? Math.max(0, gap - article!.getBoundingClientRect().top)
+      : article!.scrollTop;
     root.classList.toggle('reading-mode', on);
-    if (article) {
+    if (handOver) {
       if (on) {
-        article.scrollTop = carried;
+        article!.scrollTop = carried;
         scrollTo({ top: 0, behavior: 'instant' });
       } else {
-        scrollTo({ top: Math.max(0, article.getBoundingClientRect().top + scrollY - gap + carried), behavior: 'instant' });
+        scrollTo({ top: Math.max(0, article!.getBoundingClientRect().top + scrollY - gap + carried), behavior: 'instant' });
       }
     }
     schedule();
