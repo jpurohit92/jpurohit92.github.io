@@ -2,10 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostItem from '../../components/PostItem.astro';
 import Icon from '../../components/Icon.astro';
-import { categoryFacets, getPublishedPosts, tagFacets } from '../../lib/posts';
+import { categoryFacets, getListing, tagFacets } from '../../lib/posts';
 import { CATEGORIES } from '../../site';
 
-const posts = await getPublishedPosts();
+// Posts on this site plus linked posts published elsewhere, newest first.
+const posts = await getListing();
 const counts = new Map(categoryFacets(posts).map((c) => [c.name, c.count]));
 // Listed categories first (even with 0 posts), then any category used by a post but not listed.
 const categories = [

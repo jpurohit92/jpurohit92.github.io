@@ -1,3 +1,5 @@
+import taxonomy from './data/taxonomy.json';
+
 // Single place to edit your personal details.
 export const SITE = {
   name: 'Jatin Purohit',
@@ -34,16 +36,9 @@ export const SUMMARY_SHORT = [
 ];
 
 // Blog categories shown in the filter sidebar (in this order), each with an Octicon name.
-// Categories with no posts yet still appear (count 0). A post's `category` that isn't listed
-// here is added automatically after these.
-export const CATEGORIES = [
-  { name: 'Automation', icon: 'gear' },
-  { name: 'Engineering', icon: 'stack' },
-  { name: 'Cloud Infrastructure', icon: 'cloud' },
-  { name: 'Developer Experience', icon: 'code' },
-  { name: 'Kubernetes', icon: 'package' },
-  { name: 'AI Infrastructure', icon: 'sparkle' },
-];
+// Edit them in src/data/taxonomy.json (the only place categories and tags are defined).
+// Categories with no posts yet still appear (count 0).
+export const CATEGORIES: { name: string; icon: string }[] = taxonomy.categories;
 
 export const NAV = [
   { href: '/', label: 'Home', icon: 'home' },

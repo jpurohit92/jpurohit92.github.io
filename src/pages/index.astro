@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostItem from '../components/PostItem.astro';
 import Icon from '../components/Icon.astro';
 import TermPrompt from '../components/TermPrompt.astro';
-import { getPublishedPosts } from '../lib/posts';
+import { getListing } from '../lib/posts';
 import { SITE, SUMMARY_SHORT, url } from '../site';
 
-// Home listing: newest two published posts.
-const latest = (await getPublishedPosts()).slice(0, 2);
+// Home listing: newest two entries (posts or linked posts).
+const latest = (await getListing()).slice(0, 2);
 
 const jsonLd = {
   '@context': 'https://schema.org',

@@ -319,6 +319,8 @@ html[data-theme='dark'] .intro {
 .post-item h2 a, .post-item h3 a { color: var(--ink); text-decoration: none; }
 .post-item h2 a::after, .post-item h3 a::after { content: ''; position: absolute; inset: 0; }
 .post-item h2 a:focus-visible, .post-item h3 a:focus-visible { outline: none; }
+/* Linked posts (published elsewhere): small external-link mark after the title. */
+.post-item h2 a .ext, .post-item h3 a .ext { width: 0.6em; height: 0.6em; margin-left: 0.4em; opacity: 0.6; vertical-align: baseline; }
 .post-item:hover h2 a, .post-item:hover h3 a { color: var(--accent); }
 .post-item p { margin: 0 0 12px; color: var(--body-text); line-height: 1.65; max-width: 62ch; }
 .post-item .tags .tag { color: var(--muted); }

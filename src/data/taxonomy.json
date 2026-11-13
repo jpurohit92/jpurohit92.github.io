@@ -1,0 +1,35 @@
+{
+  "_readme": "Single source of truth for blog categories and tags. Posts (src/content/blog) and linked posts (src/data/linked-posts.json) may only use values listed here; the build fails on anything else. Category 'icon' must be an Octicon name (https://primer.style/foundations/icons). Categories appear in the blog sidebar in this order.",
+  "categories": [
+    { "name": "Automation", "icon": "gear" },
+    { "name": "Engineering", "icon": "stack" },
+    { "name": "Cloud Infrastructure", "icon": "cloud" },
+    { "name": "Developer Experience", "icon": "code" },
+    { "name": "Kubernetes", "icon": "package" },
+    { "name": "AI Infrastructure", "icon": "sparkle" }
+  ],
+  "tags": [
+    "powercli",
+    "python",
+    "rest-api",
+    "openapi",
+    "sdk",
+    "vcf",
+    "vcf-9-0",
+    "vcf-9-1",
+    "vsphere",
+    "vsphere-configuration-profile",
+    "cloud-init",
+    "gitops",
+    "holodeck",
+    "java",
+    "nsx",
+    "terraform",
+    "ansible",
+    "kubernetes",
+    "ai",
+    "events",
+    "welcome",
+    "engineering"
+  ]
+}

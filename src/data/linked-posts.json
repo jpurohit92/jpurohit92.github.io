@@ -1,0 +1,225 @@
+[
+  {
+    "title": "Client-Side SDK Generation with VMware Cloud Foundation OpenAPI Specs",
+    "description": "VMware provides first-class developer tooling such as VCF PowerCLI for PowerShell users and the VCF SDK offering Java and Python bindings.",
+    "date": "2026-09-07",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/09/07/client-side-sdk-generation-with-vmware-cloud-foundation-openapi-specs/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "openapi",
+      "vcf-9-1",
+      "sdk"
+    ]
+  },
+  {
+    "title": "Achieve Speed, Scale, and Reliability of Virtual Machine Deployments with ‘cloud-init’",
+    "description": "The VMware vSphere supports cloud init configurations through GuestInfo datasource. Learn more about how to pass cloud init configurations.",
+    "date": "2026-06-08",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/06/08/achieve-speed-scale-and-reliability-of-virtual-machine-deployments-with-cloud-init/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "cloud-init",
+      "powercli",
+      "vsphere"
+    ]
+  },
+  {
+    "title": "OAuth 2.0 Authentication Using VMware Cloud Foundation PowerCLI 9.1",
+    "description": "OAuth2.0 fully supported now with VCF 9.1. In this blog post learn about how to generate API Tokens to authenticate VCF using OAuth 2.0.",
+    "date": "2026-06-01",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/06/01/oauth-2-0-authentication-using-vmware-cloud-foundation-powercli-9-1/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "powercli",
+      "vcf-9-1",
+      "vsphere"
+    ]
+  },
+  {
+    "title": "Unlocking the Full Potential of Programmable Infrastructure with VMware Cloud Foundation 9.1 - New Features and Capabilities",
+    "description": "Treating virtual networks, storage and VKS clusters like code: what VMware Cloud Foundation 9.1 brings to programmable infrastructure.",
+    "date": "2026-05-25",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/05/25/unlocking-the-full-potential-of-programmable-infrastructure-with-vmware-cloud-foundation-9-1-new-features-and-capabilities/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "java",
+      "powercli",
+      "python",
+      "terraform",
+      "vcf-9-1",
+      "sdk"
+    ]
+  },
+  {
+    "title": "Applying GitOps Principles to Maintain Desired State Configuration using VMware vSphere Configuration Profile - Part 3",
+    "description": "This blog post demonstrate the GitOps principles to maintain desired state configurations using vSphere Configuration Profiles.",
+    "date": "2026-04-02",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/04/02/applying-gitops-principles-to-maintain-desired-state-configuration-using-vmware-vsphere-configuration-profile-part-3/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "gitops",
+      "powercli",
+      "vsphere",
+      "vsphere-configuration-profile"
+    ]
+  },
+  {
+    "title": "Automating vSphere Configuration Profile APIs – Part 2 - PowerCLI and Python Sample Code",
+    "description": "Learn about consuming VCP APIs using PowerCLI and Python. Blog post covers key concept on enabling and managing desired state configurations.",
+    "date": "2026-02-18",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/02/18/automating-vsphere-configuration-profile-apis-part-2-powercli-and-python-sample-code/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "powercli",
+      "python",
+      "sdk",
+      "vsphere"
+    ]
+  },
+  {
+    "title": "Automating Desired State Configuration using vSphere Configuration Profile APIs - Part 1",
+    "description": "Learn about all the vSphere Configuration Profile APIs for keeping vSphere environment configuration with desired state configurations.",
+    "date": "2026-01-22",
+    "url": "https://blogs.vmware.com/cloud-foundation/2026/01/22/vsphere-configuration-profile/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "rest-api",
+      "openapi",
+      "vsphere",
+      "vsphere-configuration-profile"
+    ]
+  },
+  {
+    "title": "Unified Authentication in VMware Cloud Foundation SDK 9.0: Seamless authentication across vSphere and vSAN APIs",
+    "description": "Seamless authentication across vSphere and vSAN APIs with the unified VMware Cloud Foundation SDK 9.0.",
+    "date": "2025-11-19",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/11/19/unified-authentication-in-vmware-cloud-foundation-sdk-9-0-seamless-authentication-across-vsphere-and-vsan-apis/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "vcf-9-0",
+      "sdk"
+    ]
+  },
+  {
+    "title": "Scaling VMware Cloud Foundation 9.0 Lab Environments using Holodeck 9.0",
+    "description": "Holodeck is the ultimate tool to build VCF Home labs in nested environments. Deploy, Manage, and Scale VCF 9.0 Lab environments using holodeck",
+    "date": "2025-11-09",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/11/09/add-clusters-and-hosts-in-vcf-using-holodeck/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Cloud Infrastructure",
+    "tags": [
+      "holodeck",
+      "powercli",
+      "vcf-9-0"
+    ]
+  },
+  {
+    "title": "Introducing OpenAPI Specification for VMware Cloud Foundation 9.0",
+    "description": "Automatically generate a Postman API collection using the OpenAPI specification for VMware Cloud Foundation APIs.",
+    "date": "2025-07-14",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/07/14/introducing-openapi-specification-for-vmware-cloud-foundation-9-0/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "rest-api",
+      "powercli",
+      "sdk",
+      "vcf-9-0"
+    ]
+  },
+  {
+    "title": "Automating vSphere Authorization with Global Authorization APIs",
+    "description": "How vSphere authorization works through privileges, roles and permissions, and how to automate it with the Global Authorization APIs.",
+    "date": "2025-07-07",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/07/07/automating-vsphere-authorization-with-global-authorization-apis/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Automation",
+    "tags": [
+      "java",
+      "powercli",
+      "python",
+      "sdk"
+    ]
+  },
+  {
+    "title": "Demystifying VCF PowerCLI 9.0 SDK",
+    "description": "VCF PowerCLI SDK—a set of auto-generated PowerShell modules that provide 1:1 bindings with the VCF REST APIs based on the OpenAPI specification.",
+    "date": "2025-07-02",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/07/02/demystifying-vcf-powercli-9-0-sdk/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "powercli",
+      "vcf-9-0",
+      "sdk"
+    ]
+  },
+  {
+    "title": "Announcing the General Availability of Holodeck 9.0",
+    "description": "Deploy VCF nested labs with Holodeck 9.0, now generally available.",
+    "date": "2025-06-30",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/06/30/announcing-the-general-availability-of-holodeck-9-0/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Cloud Infrastructure",
+    "tags": [
+      "holodeck",
+      "vcf-9-0"
+    ]
+  },
+  {
+    "title": "Introducing VCF PowerCLI 9.0",
+    "description": "PowerCLI is one of the most widely used automation tools in VMware environments. Here is what is new in VCF PowerCLI 9.0.",
+    "date": "2025-06-24",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/06/24/introducing-vcf-powercli-9-0/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "powercli",
+      "vcf-9-0"
+    ]
+  },
+  {
+    "title": "Introducing a Unified VCF SDK 9.0 for Python and Java",
+    "description": "Improving developer experience is a top priority for VMware Cloud Foundation. Meet the unified VCF SDK 9.0 for Python and Java.",
+    "date": "2025-06-24",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/06/24/introducing-a-unified-vcf-sdk-9-0-for-python-and-java/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "rest-api",
+      "openapi",
+      "sdk",
+      "vcf-9-0"
+    ]
+  },
+  {
+    "title": "VMware Cloud Foundation –Extending Datacenter into Public Cloud",
+    "description": "Deploying VCF on public cloud infrastructure enables customers to harness the scale and agility provided by public cloud providers.",
+    "date": "2025-01-16",
+    "url": "https://blogs.vmware.com/cloud-foundation/2025/01/16/vmware-cloud-foundation-extending-datacenter-into-public-cloud/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Cloud Infrastructure",
+    "tags": [
+      "vcf"
+    ]
+  },
+  {
+    "title": "Simplifying vSphere APIs and SDKs for a better developer experience",
+    "description": "Improving developer experience is one of the top priorities as we move forward with VMware Cloud Foundation (VCF). We achieve this by offering a set of APIs, SDK bindings, and CLI interface to automate and administer VCF.",
+    "date": "2024-07-09",
+    "url": "https://blogs.vmware.com/cloud-foundation/2024/07/09/simplifying-vsphere-apis-and-sdks-for-a-better-developer-experience/",
+    "source": "VMware Cloud Foundation Blog",
+    "category": "Developer Experience",
+    "tags": [
+      "vcf"
+    ]
+  }
+]
