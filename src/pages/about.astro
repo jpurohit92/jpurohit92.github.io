@@ -23,14 +23,17 @@ const description =
   'A little about Jatin Purohit: 12+ years across cloud infrastructure, virtualization, automation and developer platforms, and a few things he believes in.';
 ---
 <BaseLayout title="About" description={description}>
-  <div class="page">
-    <h1 class="page-title">A little <span class="grad-text">about me</span></h1>
+  <div class="about-layout">
+    <!-- Left column (sticky on wide screens): title and vertical sub menu. -->
+    <aside class="about-head">
+      <h1 class="about-title">A little <span class="grad-text">about me</span></h1>
+      <div class="subnav" role="tablist" aria-orientation="vertical" aria-label="About sections">
+        <button class="subnav-item" role="tab" type="button" id="tab-about" aria-controls="panel-about" aria-selected="true" data-tab="about"><Icon name="person" /><span>About me</span></button>
+        <button class="subnav-item" role="tab" type="button" id="tab-experience" aria-controls="panel-experience" aria-selected="false" tabindex="-1" data-tab="experience"><Icon name="briefcase" /><span>Experience &amp; certifications</span></button>
+      </div>
+    </aside>
 
-    <div class="tabs" role="tablist" aria-label="About sections">
-      <button class="tab" role="tab" type="button" id="tab-about" aria-controls="panel-about" aria-selected="true" data-tab="about">About me</button>
-      <button class="tab" role="tab" type="button" id="tab-experience" aria-controls="panel-experience" aria-selected="false" tabindex="-1" data-tab="experience">Experience &amp; certifications</button>
-    </div>
-
+    <div class="surface about-card">
     <div class="tab-panel" role="tabpanel" id="panel-about" aria-labelledby="tab-about" data-panel="about">
       <div class="about-summary">
         <p>Hey, I'm Jatin! 👋</p>
@@ -58,7 +61,7 @@ const description =
     </div>
 
     <div class="tab-panel" role="tabpanel" id="panel-experience" aria-labelledby="tab-experience" data-panel="experience">
-      <section class="section" style="margin-top:32px">
+      <section class="section">
         <h2><Icon name="briefcase" />Experience</h2>
         <ol class="timeline">
           {experience.map((e) => (
@@ -90,6 +93,7 @@ const description =
         <div class="tags">{skills.map((s) => <span class="tag">{s}</span>)}</div>
       </section>
     </div>
+    </div>
   </div>
 </BaseLayout>
 
@@ -117,9 +121,13 @@ const description =
       history.replaceState(null, '', t.dataset.tab === 'experience' ? '#experience' : location.pathname);
     });
     t.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      const fwd = e.key === 'ArrowDown' || e.key === 'ArrowRight';
+      const back = e.key === 'ArrowUp' || e.key === 'ArrowLeft';
+      if (!fwd && !back) return;
+      e.preventDefault();
+      const next = tabs[(i + (fwd ? 1 : tabs.length - 1)) % tabs.length];
       select(next.dataset.tab!, true);
+      history.replaceState(null, '', next.dataset.tab === 'experience' ? '#experience' : location.pathname);
     });
   });
   addEventListener('hashchange', () => select(fromHash()));
