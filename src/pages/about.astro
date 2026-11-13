@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { SUMMARY } from '../site';
 
 // Source: LinkedIn profile.
 const experience = [
@@ -19,45 +18,109 @@ const certifications = [
   'VMUG Leader',
 ];
 const skills = ['Technology Marketing', 'Product Marketing', 'Technical Marketing'];
----
-<BaseLayout title="About" description={SUMMARY[0]}>
-  <div class="page">
-    <h1 class="page-title">About <span class="grad-text">me</span></h1>
 
-    <div class="about-summary">
-      {SUMMARY.map((p) => <p>{p}</p>)}
+const description =
+  'A little about Jatin Purohit: 12+ years across cloud infrastructure, virtualization, automation and developer platforms, and a few things he believes in.';
+---
+<BaseLayout title="About" description={description}>
+  <div class="page">
+    <h1 class="page-title">A little <span class="grad-text">about me</span></h1>
+
+    <div class="tabs" role="tablist" aria-label="About sections">
+      <button class="tab" role="tab" type="button" id="tab-about" aria-controls="panel-about" aria-selected="true" data-tab="about">About me</button>
+      <button class="tab" role="tab" type="button" id="tab-experience" aria-controls="panel-experience" aria-selected="false" tabindex="-1" data-tab="experience">Experience &amp; certifications</button>
     </div>
 
-    <section class="section">
-      <h2><Icon name="briefcase" />Experience</h2>
-      <ol class="timeline">
-        {experience.map((e) => (
-          <li>
-            <h3>{e.role} · <span class="org">{e.org}</span></h3>
-            <div class="when"><Icon name="calendar" />{e.when}</div>
-            {e.text && <p>{e.text}</p>}
-          </li>
-        ))}
-      </ol>
-    </section>
+    <div class="tab-panel" role="tabpanel" id="panel-about" aria-labelledby="tab-about" data-panel="about">
+      <div class="about-summary">
+        <p>Hey, I'm Jatin! 👋</p>
+        <p>I've always been curious about technology. Not just how things work, but why they work the way they do, how they're built, and how we can make them better.</p>
+        <p>That curiosity has taken me through more than 12 years of working with cloud infrastructure, virtualization, automation, and developer platforms. Over the years, the technologies have changed, the platforms have evolved, and there's always been something new to figure out. That's probably what I enjoy most about being in tech — you're never really done learning.</p>
+        <p>Today, I work as a Principal Technical Marketing Engineer at VMware by Broadcom, focusing on VMware Cloud Foundation. My role sits at an interesting intersection of product, engineering, and developer experience.</p>
+        <p>A lot of my work revolves around APIs, SDKs, PowerCLI, and automation. But beyond the tools and technologies, what really interests me is making complex infrastructure easier for people to understand and work with. Sometimes that means building something, sometimes it's simplifying a complicated workflow, and sometimes it's finding a better way to explain how things fit together.</p>
+        <p>One of the most rewarding parts of my journey has been getting to share what I've learned. I've had the opportunity to speak at VMware Explore, Oracle CloudWorld, and VMUG, meet some incredibly talented people, and exchange ideas with the wider technology community. I've learned just as much from those conversations as I have from the work itself.</p>
+        <p>Lately, my curiosity has been taking me deeper into AI infrastructure, Kubernetes, cloud-native technologies, and developer tooling. I'm particularly interested in how AI and automation are changing the way we build, operate, and interact with infrastructure. There's a lot happening in this space, and I'm enjoying exploring it one experiment at a time.</p>
 
-    <section class="section">
-      <h2><Icon name="verified" />Certifications &amp; community</h2>
-      <ul class="list">
-        {certifications.map((c) => <li>{c}</li>)}
-      </ul>
-    </section>
+        <h2>A few things I believe in</h2>
+        <p>Over the years, I've come to believe in a few things that shape how I approach technology, work, and life.</p>
 
-    <section class="section">
-      <h2><Icon name="book" />Education</h2>
-      <ul class="list">
-        <li><strong>SRM University</strong> · Bachelor of Technology (B.Tech.), Software Engineering · 2010 – 2014</li>
-      </ul>
-    </section>
+        <h3>Values outlast technology.</h3>
+        <p>Tools come and go. Technologies evolve, sometimes faster than we can keep up with. But the principles and values we live by should remain constant. To me, technology is a means to an end, not the purpose itself. Without strong values and a sense of purpose, even the greatest achievements can feel meaningless.</p>
 
-    <section class="section">
-      <h2><Icon name="star" />Top skills</h2>
-      <div class="tags">{skills.map((s) => <span class="tag">{s}</span>)}</div>
-    </section>
+        <h3>Ideas are only the beginning.</h3>
+        <p>I've always believed that an idea, no matter how brilliant, means very little without execution. It's the effort, discipline, persistence, and willingness to do the hard work that turn ideas into something meaningful. Thinking about building something is easy. Actually building it is where the real learning begins.</p>
+
+        <h3>Fail fast. Learn faster. Iterate.</h3>
+        <p>Not everything works the first time, and that's perfectly fine. I'd rather experiment, make mistakes, learn what went wrong, and improve than spend forever trying to get everything perfect before starting. Progress comes from trying, learning, and continuously getting better.</p>
+
+        <p>These aren't just principles I apply to technology. They're ideas I try to carry into everything I do.</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" role="tabpanel" id="panel-experience" aria-labelledby="tab-experience" data-panel="experience">
+      <section class="section" style="margin-top:32px">
+        <h2><Icon name="briefcase" />Experience</h2>
+        <ol class="timeline">
+          {experience.map((e) => (
+            <li>
+              <h3>{e.role} · <span class="org">{e.org}</span></h3>
+              <div class="when"><Icon name="calendar" />{e.when}</div>
+              {e.text && <p>{e.text}</p>}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="section">
+        <h2><Icon name="verified" />Certifications &amp; community</h2>
+        <ul class="list">
+          {certifications.map((c) => <li>{c}</li>)}
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2><Icon name="book" />Education</h2>
+        <ul class="list">
+          <li><strong>SRM University</strong> · Bachelor of Technology (B.Tech.), Software Engineering · 2010 – 2014</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2><Icon name="star" />Top skills</h2>
+        <div class="tags">{skills.map((s) => <span class="tag">{s}</span>)}</div>
+      </section>
+    </div>
   </div>
 </BaseLayout>
+
+<script>
+  // Tabs: both panels render without JS; with JS only the active one shows. Supports #experience.
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"][data-tab]')];
+  const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];
+
+  const select = (name: string, focus = false) => {
+    for (const t of tabs) {
+      const on = t.dataset.tab === name;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      if (on && focus) t.focus();
+    }
+    for (const p of panels) p.hidden = p.dataset.panel !== name;
+  };
+
+  const fromHash = () => (location.hash === '#experience' ? 'experience' : 'about');
+  select(fromHash());
+
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => {
+      select(t.dataset.tab!);
+      history.replaceState(null, '', t.dataset.tab === 'experience' ? '#experience' : location.pathname);
+    });
+    t.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      select(next.dataset.tab!, true);
+    });
+  });
+  addEventListener('hashchange', () => select(fromHash()));
+</script>
