@@ -138,14 +138,14 @@ html[data-width='narrow'] .article-layout { --measure-n: 30; }
 @media (max-width: 1279px) { .prefs-width { display: none; } }
 
 /* ---------- Reading mode: everything except the article card fades and blurs over 2s ---------- */
-.site-header, .site-footer, .article-head, .toc-desktop {
+.site-footer, .article-head, .toc-desktop {
   transition: filter 2s ease, opacity 2s ease;
 }
-html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) {
+html.reading-mode :is(.site-footer, .article-head, .toc-desktop) {
   filter: blur(8px); opacity: 0.4;
 }
 /* Keyboard users who tab into a blurred area get it back in focus. */
-html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop):focus-within {
+html.reading-mode :is(.site-footer, .article-head, .toc-desktop):focus-within {
   filter: none; opacity: 1; transition-duration: 0.2s;
 }
 
@@ -155,7 +155,7 @@ html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop):f
 html.reading-mode:root {
   --page-bg: #000000; --ink: #f1f5f9; --muted: #a0aec0; --line: #2e3150; --accent: #818cf8; --accent-soft: #1e1b4b;
   --glass: rgba(255, 255, 255, 0.06); --glass-hover: rgba(255, 255, 255, 0.12); --glass-line: rgba(255, 255, 255, 0.16);
-  --header-bg: rgba(0, 0, 0, 0.72); --header-line: rgba(255, 255, 255, 0.1);
+  --header-bg: #000000; --header-line: rgba(255, 255, 255, 0.1); /* header stays sharp, solid black */
   --progress-a: #818cf8; --progress-b: #e879f9;
   --orb-op: 0;
   color-scheme: dark;
@@ -197,10 +197,10 @@ html.rm-anim body, html.rm-anim .bg { transition: background-color 2s ease, colo
 html.rm-anim :is(.article-main, .article-main *, .site-header *, .site-footer *, .article-head *, .toc-desktop *) {
   transition: color 2s ease, background-color 2s ease, border-color 2s ease, box-shadow 2s ease;
 }
-html.rm-anim .site-header { transition: filter 2s ease, opacity 2s ease, background-color 2s ease, border-color 2s ease; }
+html.rm-anim .site-header { transition: background-color 2s ease, border-color 2s ease; }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-header, .site-footer, .article-head, .toc-desktop, .bg span { transition-duration: 0.01s; }
+  .site-footer, .article-head, .toc-desktop, .bg span { transition-duration: 0.01s; }
   html.rm-anim body, html.rm-anim .bg, html.rm-anim :is(.article-main, .article-main *, .site-header *, .site-footer *, .article-head *, .toc-desktop *) { transition-duration: 0.01s; }
 }
 
@@ -346,7 +346,7 @@ html[data-theme='dark']:not(.reading-mode) .astro-code span { color: var(--shiki
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }
   .reading-progress, .toc-mobile, .toc-desktop, .prefs-wrap, .code-copy, .article-back, .article-tools, .reading-hint { display: none !important; }
-  html.reading-mode :is(.site-header, .site-footer, .article-head, .toc-desktop) { filter: none; opacity: 1; }
+  html.reading-mode :is(.site-footer, .article-head, .toc-desktop) { filter: none; opacity: 1; }
 }
 
 /* Separator dots would land at the start of wrapped lines on narrow screens; rely on spacing instead. */
