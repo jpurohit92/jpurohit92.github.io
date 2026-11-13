@@ -38,13 +38,14 @@ const jsonLd = {
     </aside>
 
     <section class="intro" aria-labelledby="intro-title">
-      <h1 id="intro-title" class="term-h1 term-step">Hi, I'm <span class="grad-text">{SITE.name.split(' ')[0]}</span>.</h1>
+      <h1 id="intro-title" class="term-h1 term-step">Hey, I'm <span class="grad-text">{SITE.name.split(' ')[0]}</span>! 👋</h1>
       <p class="term-line term-step" aria-hidden="true">
         <TermPrompt />
         <span data-cmd>cat intro.md</span>
       </p>
       <div class="term-text term-step">
         {SUMMARY_SHORT.map((p) => <p>{p}</p>)}
+        <p><strong>Glad you're here. Feel free to check out my recent <a href={url('/blog')}>blogs</a>.</strong></p>
       </div>
     </section>
 
