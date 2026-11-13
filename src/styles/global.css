@@ -177,7 +177,7 @@ html:has(.home) { scrollbar-width: none; }
 html:has(.home)::-webkit-scrollbar { display: none; }
 .home {
   position: relative; width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px 32px;
-  flex: 1; display: grid; grid-template-columns: minmax(240px, 22%) 1fr; gap: 20px 40px; align-items: start;
+  flex: 1; display: grid; grid-template-columns: minmax(240px, 22%) 1fr; gap: 20px clamp(48px, 7vw, 112px); align-items: start;
   /* Equal air above and below the profile + intro block (matches the footer gap). */
   align-content: center;
 }
@@ -210,7 +210,7 @@ html:has(.home)::-webkit-scrollbar { display: none; }
 .intro {
   /* Light: high-contrast prompt on white. Dark: bright terminal tones. */
   --t-green: #0a7a2f; --t-blue: #0550ae;
-  width: 100%; min-width: 0; justify-self: end; align-self: start;
+  width: 100%; max-width: 880px; min-width: 0; justify-self: start; align-self: start;
   font-family: 'JetBrainsMono Nerd Font', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 18px; /* Match .prose article body */
 }
@@ -390,7 +390,7 @@ html[data-theme='dark'] .intro {
   .site-nav { order: 3; width: 100%; margin: 0; gap: 18px; }
   .site-nav a { padding: 7px 2px; }
   .home { grid-template-columns: 1fr; gap: 40px; padding: 32px 24px; align-content: start; }
-  .intro { margin-top: 0; width: 100%; justify-self: stretch; }
+  .intro { margin-top: 0; width: 100%; max-width: none; justify-self: stretch; }
   .featured { margin-top: 0; padding-top: 32px; }
   .photo-wrap, .photo-wrap img { width: 180px; height: 180px; }
 }
