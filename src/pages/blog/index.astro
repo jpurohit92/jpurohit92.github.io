@@ -55,6 +55,7 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
     <h1 class="page-title">Writing</h1>
     <p class="page-lead">Practical notes on cloud infrastructure, automation and developer experience.</p>
 
+    <div class="card-scroll">
     {posts.length > 0 ? (
       <ul class="post-list" style="margin-top:32px">
         {posts.map((p) => <PostItem post={p} />)}
@@ -65,6 +66,7 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
     <p class="empty" data-filter-empty hidden>No posts match these filters.</p>
     <nav class="pager" aria-label="Pagination" data-pager hidden></nav>
     <p class="sr-only" role="status" aria-live="polite" data-filter-status></p>
+    </div>
    </div>
   </div>
 

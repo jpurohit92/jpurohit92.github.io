@@ -183,7 +183,11 @@ html { scrollbar-gutter: stable; }
   .article-layout { flex: 1 1 auto; min-height: 0; width: 100%; padding-bottom: 24px; grid-template-rows: minmax(0, 1fr); }
   .article-layout .article-main { display: flex; flex-direction: column; overflow: hidden; align-self: stretch; min-height: 0; }
   .article-tools, .reading-title { flex: none; }
-  .prose {
+  /* Side columns fill the row too (no sticky needed once the page itself doesn't scroll) and scroll only if they overflow. */
+  .article-layout .article-head { position: static; align-self: stretch; min-height: 0; max-height: none; display: flex; flex-direction: column; }
+  .article-layout .article-head-body { flex: 1 1 auto; min-height: 0; max-height: none; }
+  .article-layout .toc-desktop { position: static; align-self: stretch; min-height: 0; max-height: none; }
+  :is(.prose, .card-scroll) {
     flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: 1em;
     margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); padding: 0 var(--card-pad) var(--card-pad);
   }
@@ -200,7 +204,7 @@ html { scrollbar-gutter: stable; }
     height: calc(100dvh - var(--header-h, 72px) - 16px - 24px);
   }
   html.reading-mode .article-tools, html.reading-mode .reading-title { flex: none; }
-  html.reading-mode .prose {
+  html.reading-mode :is(.prose, .card-scroll) {
     flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: 1em;
     margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); padding: 0 var(--card-pad) var(--card-pad);
   }
@@ -391,7 +395,7 @@ html[data-theme='dark']:not(.reading-mode) .astro-code span { color: var(--shiki
 
 @media print {
   body { height: auto !important; overflow: visible !important; }
-  .article-main, .prose { display: block !important; height: auto !important; overflow: visible !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+  .article-main, .prose, .card-scroll { display: block !important; height: auto !important; overflow: visible !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
   .article-main { border: 0; box-shadow: none; padding: 0; }
   .article-head { position: static; max-width: none; }
   .article-head-body { max-height: none; overflow: visible; }

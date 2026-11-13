@@ -1,6 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import ReadingPrefs from '../components/ReadingPrefs.astro';
+import ReadingHint from '../components/ReadingHint.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import '../styles/article.css';
 
 // Source: LinkedIn profile.
 const experience = [
@@ -21,19 +26,32 @@ const skills = ['Technology Marketing', 'Product Marketing', 'Technical Marketin
 
 const description =
   'A little about Jatin Purohit: 12+ years across cloud infrastructure, virtualization, automation and developer platforms, and a few things he believes in.';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 ---
 <BaseLayout title="About" description={description}>
-  <div class="about-layout">
-    <!-- Left column (sticky on wide screens): title and vertical sub menu. -->
-    <aside class="about-head">
-      <h1 class="about-title">A little <span class="grad-text">about me</span></h1>
-      <div class="subnav" role="tablist" aria-orientation="vertical" aria-label="About sections">
-        <button class="subnav-item" role="tab" type="button" id="tab-about" aria-controls="panel-about" aria-selected="true" data-tab="about"><Icon name="person" /><span>About me</span></button>
-        <button class="subnav-item" role="tab" type="button" id="tab-experience" aria-controls="panel-experience" aria-selected="false" tabindex="-1" data-tab="experience"><Icon name="briefcase" /><span>Experience &amp; certifications</span></button>
+  <ReadingProgress />
+  <!-- Same shell as a blog post (see ArticleLayout): title + menu on the left, a card on the right whose
+       toolbar stays fixed while only the text scrolls. Reading mode, text size and width come from article.css / article.ts. -->
+  <div class="article-layout">
+    <aside class="article-head">
+      <div class="article-head-body">
+        <h1 class="article-title" id="article-title">A little <span class="grad-text">about me</span></h1>
+        <div class="subnav" role="tablist" aria-orientation="vertical" aria-label="About sections">
+          <button class="subnav-item" role="tab" type="button" id="tab-about" aria-controls="panel-about" aria-selected="true" data-tab="about"><Icon name="person" /><span>About me</span></button>
+          <button class="subnav-item" role="tab" type="button" id="tab-experience" aria-controls="panel-experience" aria-selected="false" tabindex="-1" data-tab="experience"><Icon name="briefcase" /><span>Experience &amp; certifications</span></button>
+        </div>
       </div>
     </aside>
 
-    <div class="surface about-card">
+    <div class="article-main about-card" aria-labelledby="article-title">
+      <div class="article-tools">
+        <ShareButtons title="About Jatin Purohit" url={pageUrl} />
+        <ReadingPrefs />
+      </div>
+      <div class="reading-title" aria-hidden="true">
+        <div class="reading-title__inner"><p class="reading-title__text">A little about me</p></div>
+      </div>
+      <div class="card-scroll" id="article-body">
     <div class="tab-panel" role="tabpanel" id="panel-about" aria-labelledby="tab-about" data-panel="about">
       <div class="about-summary">
         <p>Hey, I'm Jatin! 👋</p>
@@ -93,10 +111,16 @@ const description =
         <div class="tags">{skills.map((s) => <span class="tag">{s}</span>)}</div>
       </section>
     </div>
+      </div>
     </div>
   </div>
+  <ReadingHint />
+  <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
 </BaseLayout>
 
+<script>
+  import '../scripts/article.ts';
+</script>
 <script>
   // Tabs: both panels render without JS; with JS only the active one shows. Supports #experience.
   const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"][data-tab]')];
@@ -110,6 +134,9 @@ const description =
       if (on && focus) t.focus();
     }
     for (const p of panels) p.hidden = p.dataset.panel !== name;
+    // A new tab starts at the top of the card.
+    const body = document.getElementById('article-body');
+    if (body) body.scrollTop = 0;
   };
 
   const fromHash = () => (location.hash === '#experience' ? 'experience' : 'about');

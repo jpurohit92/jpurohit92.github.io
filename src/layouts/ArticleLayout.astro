@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import ReadingProgress from '../components/ReadingProgress.astro';
 import ReadingPrefs from '../components/ReadingPrefs.astro';
+import ReadingHint from '../components/ReadingHint.astro';
 import ShareButtons from '../components/ShareButtons.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { formatDate, readingLabel } from '../lib/posts';
@@ -96,8 +97,7 @@ const jsonLd = {
     </article>
     {hasToc && <TableOfContents headings={tocHeadings} variant="desktop" />}
   </div>
-  <!-- Shown by scripts/article.ts while reading mode is on; decorative (copy-status announces the change). -->
-  <div class="reading-hint" aria-hidden="true">Press <kbd>ESC</kbd> to exit from reading mode</div>
+  <ReadingHint />
   <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
   <script>
     import '../scripts/article.ts';
