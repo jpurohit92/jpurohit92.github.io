@@ -22,6 +22,14 @@ jobs:
       - uses: withastro/action@v3
         with:
           node-version: 22
+          # Build, then validate the generated site. A failing SEO check fails this job,
+          # so the deploy job below never runs. See docs/SEO.md.
+          build-cmd: npm run build && npm run seo:check
+        env:
+          # Optional, set under Settings > Secrets and variables > Actions > Variables.
+          # Empty means the feature is off (see docs/SEO.md).
+          PUBLIC_GA_MEASUREMENT_ID: ${{ vars.PUBLIC_GA_MEASUREMENT_ID }}
+          PUBLIC_GSC_VERIFICATION: ${{ vars.PUBLIC_GSC_VERIFICATION }}
 
   deploy:
     needs: build

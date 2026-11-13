@@ -18,6 +18,7 @@ cp templates/blog-post.mdx src/content/blog/my-new-post.mdx
 ```
 
 Then edit the frontmatter and body. Only files under `src/content/blog/` are published (unless `draft: true`).
+Before pushing, run `npm run build && npm run seo:check`. SEO fields and the publishing checklist are in [`docs/SEO.md`](../docs/SEO.md).
 
 ## Linked post (published elsewhere)
 

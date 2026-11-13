@@ -1,21 +1,32 @@
 ---
 # Copy this file into src/content/blog/, rename it (e.g. my-topic.mdx), then fill these in.
-title: "Your post title"
-description: One or two sentences for the listing page and SEO.
-date: 2026-11-12
-# updated: 2026-11-13
+# The file name is the URL: src/content/blog/my-topic.mdx -> /blog/my-topic/ (don't rename once published).
+# Field reference and SEO checklist: docs/SEO.md
+title: "Your post title" # shown as the page heading (H1)
+description: One or two plain sentences (70-160 characters) for search results, link previews and the listing page.
+date: 2026-11-12 # publication date, YYYY-MM-DD
+# updated: 2026-11-13 # only when you substantively revise the post later
 category: Automation
 # category and tags must exist in src/data/taxonomy.json, otherwise the build fails.
 # Add new ones there first.
 tags: [powercli, python, rest-api]
-# draft: true
+# draft: true # drafts are not built, not in the sitemap, not in the RSS feed
+
+# --- Optional SEO fields ---
+# seoTitle: "Shorter title for search results" # <title> and link previews only; the heading above is unchanged
+# cover: ../../assets/my-post-cover.png # 1200x630 works best; used for link previews (file lives in src/assets/)
+# coverAlt: "Describe the image for people who can't see it" # required when cover is set
+# canonical: https://example.com/original-post # only if this post was first published elsewhere
+# noindex: true # keep this page out of search results and the sitemap
+# author: Jatin Purohit # default
 ---
 
 > **Authoring template** — not published. To write a new post:
 > 1. Copy `templates/blog-post.mdx` → `src/content/blog/<slug>.mdx`
 > 2. Update the frontmatter (`title`, `description`, `date`, `category`, `tags`)
+>    and write the body with `##` headings (the title is already the H1)
 > 3. Replace the body with your content (headings, code, tables, and lists below show what the layout supports)
-> 4. Preview with `npm run dev`, then commit and push to publish
+> 4. Preview with `npm run dev`, run `npm run build && npm run seo:check`, then commit and push to publish
 
 Almost every team that runs virtualised infrastructure ends up with the same request: *"can you send me a list of all the VMs, who owns them, and how big they are?"* Doing that by hand once is fine. Doing it every month is a task worth automating.
 

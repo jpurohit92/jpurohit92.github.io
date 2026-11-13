@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostItem from '../../components/PostItem.astro';
 import Icon from '../../components/Icon.astro';
 import { categoryFacets, getListing, tagFacets } from '../../lib/posts';
-import { CATEGORIES } from '../../site';
+import { CATEGORIES, url } from '../../site';
+import { breadcrumbSchema, graph } from '../../lib/seo';
 
 // Posts on this site plus linked posts published elsewhere, newest first.
 const posts = await getListing();
@@ -19,6 +20,7 @@ const showFilters = posts.length > 0 && (categories.length > 0 || tags.length > 
 <BaseLayout
   title="Writing"
   description="Practical notes on cloud infrastructure, automation and developer experience by Jatin Purohit."
+  jsonLd={graph(breadcrumbSchema([{ name: 'Home', path: url('/') }, { name: 'Blog', path: url('/blog/') }]))}
 >
   <div class="blog-layout">
   {showFilters && (

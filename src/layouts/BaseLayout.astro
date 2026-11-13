@@ -1,51 +1,30 @@
 ---
 import '../styles/global.css';
+// Preload the Latin subset of the body font (the only Inter file most pages need) so text renders
+// in the final font sooner. Vite resolves this to the same hashed file the CSS uses.
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, url } from '../site';
+import Seo from '../components/Seo.astro';
+import Analytics from '../components/Analytics.astro';
+import type { ComponentProps } from 'astro/types';
+import { url } from '../site';
+import { SEO } from '../lib/seo-config.mjs';
 
-interface Props {
-  title?: string;
-  description?: string;
-  /** Open Graph type. Use "article" for blog posts. */
-  type?: 'website' | 'article';
-  publishedTime?: Date;
-  modifiedTime?: Date;
-  tags?: string[];
-  /** Structured data (JSON-LD) to embed in <head>. */
-  jsonLd?: Record<string, unknown>;
-}
-const { title, description = SITE.description, type = 'website', publishedTime, modifiedTime, tags = [], jsonLd } = Astro.props;
-const fullTitle = title ? `${title} · ${SITE.name}` : SITE.title;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const image = new URL(url('/profile.jpg'), Astro.site);
+// SEO props are documented on components/Seo.astro.
+type Props = ComponentProps<typeof Seo>;
+const seo = Astro.props;
 ---
 <!doctype html>
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
+    <Seo {...seo} />
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
-    <link rel="alternate" type="application/rss+xml" title={SITE.name} href={url('/rss.xml')} />
-    <link rel="canonical" href={canonical} />
-
-    <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
-    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
-    {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
-    {type === 'article' && <meta property="article:author" content={SITE.name} />}
-    {tags.map((t) => <meta property="article:tag" content={t} />)}
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={fullTitle} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <link rel="alternate" type="application/rss+xml" title={SEO.siteName} href={url('/rss.xml')} />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <Analytics />
 
     <script is:inline>
       // Apply saved theme (or system preference) and reading preferences before

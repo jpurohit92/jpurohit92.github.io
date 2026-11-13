@@ -1,0 +1,11 @@
+---
+// GitHub Pages serves dist/404.html for unknown URLs. Kept out of search results and the sitemap.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../site';
+---
+<BaseLayout title="Page not found" description="The page you were looking for does not exist." noindex>
+  <div class="page">
+    <h1 class="page-title">Page not found</h1>
+    <p class="page-lead">That address doesn't lead anywhere. Try the <a href={url('/')}>home page</a> or browse <a href={url('/blog/')}>all writing</a>.</p>
+  </div>
+</BaseLayout>

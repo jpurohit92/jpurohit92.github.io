@@ -1,0 +1,36 @@
+---
+description: SEO and editorial rules for blog posts in src/content/blog. Use when creating or editing articles.
+globs: src/content/blog/**/*.md,src/content/blog/**/*.mdx,templates/blog-post.mdx
+alwaysApply: false
+---
+
+# Blog post SEO
+
+Start from `templates/blog-post.mdx`. Field reference: `docs/SEO.md`.
+
+## Frontmatter (schema: `src/content.config.ts`)
+- Required: `title`, `description`, `date` (YYYY-MM-DD), `category`, `tags` (from `src/data/taxonomy.json`).
+- Set `updated` only when the post was substantively revised after publishing. Never copy `date` into it.
+- Optional: `seoTitle` (shorter search title; the visible `title` is unchanged), `cover` + `coverAlt` (always together), `canonical` (only for content first published elsewhere), `noindex`, `slug`, `author`.
+- The file name is the URL. Never rename a published post without adding a redirect.
+
+## Titles and descriptions
+- Natural and descriptive, written for a reader first. No keyword stuffing, no clickbait.
+- Aim for a search title ≲ 60 characters including ` · Jatin Purohit`; if the title is longer, add `seoTitle` rather than rewriting the title.
+- Description: one or two plain sentences, 70-160 characters, saying what the reader will get. Unique per post.
+
+## Structure
+- Do not write an H1 in the body; the frontmatter title is the H1. Start at `##`, then `###`. Never skip a level.
+- Headings describe the section (they become anchors and the "On this page" list).
+- Images: Markdown/`<Image>` with meaningful alt text.
+
+## Internal linking
+- Link to related posts and pages where it helps the reader, using root-relative URLs with a trailing slash (`/blog/other-post/`). Descriptive link text, not "click here".
+- Do not add links just for SEO.
+
+## Voice
+- Preserve the author's conversational, first-person style. Do not rewrite, "optimize" or formalize existing prose; suggest edits instead of applying them.
+- Keep dates accurate. Do not backdate or change `date` on published posts.
+
+## Before finishing
+Run `npm run build && npm run seo:check` and report errors and recommendations for the post.

@@ -1,0 +1,88 @@
+---
+// All SEO <head> tags in one place: title, description, canonical, robots, Open Graph, Twitter
+// and JSON-LD. Rendered by BaseLayout, so every page gets it. Site-wide values come from
+// src/lib/seo-config.mjs; nothing here should hard-code a URL.
+import { SEO } from '../lib/seo-config.mjs';
+import { absoluteUrl, canonicalFor, fullTitle, personId, isoDate, type JsonLd } from '../lib/seo';
+import { url } from '../site';
+
+interface Props {
+  /** Visible page title, without the site name. Omit for the home page. */
+  title?: string;
+  /** Optional SEO-only title for <title>, og:title and twitter:title. The visible heading is unchanged. */
+  seoTitle?: string;
+  description?: string;
+  /** Absolute canonical override (e.g. a post first published elsewhere). Defaults to this page's own URL. */
+  canonical?: string;
+  /** Adds <meta name="robots" content="noindex, follow">. Also keep the page out of the sitemap. */
+  noindex?: boolean;
+  /** Open Graph type. Use "article" for blog posts. */
+  type?: 'website' | 'article';
+  /** Social preview image. Falls back to the default preview (public/og-default.png). */
+  image?: { url: string; alt?: string; width?: number; height?: number };
+  publishedTime?: Date;
+  /** Only pass a real `updated` date; do not default it to the publish date. */
+  modifiedTime?: Date;
+  tags?: string[];
+  section?: string;
+  /** One JSON-LD document or several. */
+  jsonLd?: JsonLd | JsonLd[];
+}
+const {
+  title,
+  seoTitle,
+  description = SEO.defaultDescription,
+  canonical: canonicalOverride,
+  noindex = false,
+  type = 'website',
+  image,
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  section,
+  jsonLd,
+} = Astro.props;
+
+const headline = seoTitle ?? title;
+const pageTitle = fullTitle(headline);
+// og:title / twitter:title carry the page's own title; the site name is sent as og:site_name.
+const shareTitle = headline ?? SEO.defaultTitle;
+const canonical = canonicalOverride ?? canonicalFor(Astro.url.pathname);
+const social = image ?? {
+  url: absoluteUrl(url(SEO.defaultImage.path)),
+  alt: SEO.defaultImage.alt,
+  width: SEO.defaultImage.width,
+  height: SEO.defaultImage.height,
+};
+const documents = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
+---
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+{!(noindex && !canonicalOverride) && <link rel="canonical" href={canonical} />}
+{noindex && <meta name="robots" content="noindex, follow" />}
+{gscVerification && <meta name="google-site-verification" content={gscVerification} />}
+
+<meta property="og:site_name" content={SEO.siteName} />
+<meta property="og:locale" content={SEO.locale} />
+<meta property="og:type" content={type} />
+{!(noindex && !canonicalOverride) && <meta property="og:url" content={canonical} />}
+<meta property="og:title" content={shareTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={social.url} />
+{social.width && <meta property="og:image:width" content={String(social.width)} />}
+{social.height && <meta property="og:image:height" content={String(social.height)} />}
+{social.alt && <meta property="og:image:alt" content={social.alt} />}
+{publishedTime && <meta property="article:published_time" content={isoDate(publishedTime)} />}
+{modifiedTime && <meta property="article:modified_time" content={isoDate(modifiedTime)} />}
+{type === 'article' && <meta property="article:author" content={absoluteUrl(url('/about/'))} />}
+{section && <meta property="article:section" content={section} />}
+{tags.map((t) => <meta property="article:tag" content={t} />)}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={shareTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={social.url} />
+{social.alt && <meta name="twitter:image:alt" content={social.alt} />}
+
+{documents.map((doc) => <script type="application/ld+json" set:html={JSON.stringify(doc)} />)}

@@ -1,18 +1,18 @@
 import taxonomy from './data/taxonomy.json';
+import { SEO } from './lib/seo-config.mjs';
 
 // Single place to edit your personal details.
 export const SITE = {
-  name: 'Jatin Purohit',
+  name: SEO.siteName,
   handle: 'jatinpurohit92',
-  title: 'Jatin Purohit · Principal Technical Marketing Engineer',
-  description:
-    'Jatin Purohit is a Principal Technical Marketing Engineer with 12+ years of experience across cloud infrastructure, virtualization, developer platforms, automation, and technical product strategy.',
+  title: SEO.defaultTitle,
+  description: SEO.defaultDescription,
   role: 'Principal Technical Marketing Engineer',
   company: 'VMware Cloud Foundation · Broadcom',
   tagline: 'Principal Technical Marketing Engineer at VMware by Broadcom.',
   email: 'jpurohit92@outlook.com',
-  github: 'https://github.com/jpurohit92',
-  linkedin: 'https://www.linkedin.com/in/jatinpurohit92/',
+  github: SEO.profiles.github,
+  linkedin: SEO.profiles.linkedin,
   // Profile photo lives in /public.
   photo: '/profile.jpg',
 };
@@ -41,9 +41,8 @@ export const CATEGORIES: { name: string; icon: string }[] = taxonomy.categories;
 
 export const NAV = [
   { href: '/', label: 'Home', icon: 'home' },
-  { href: '/blog', label: 'Blog', icon: 'pencil' },
-  { href: '/projects', label: 'Projects', icon: 'repo' },
-  { href: '/about', label: 'About', icon: 'person' },
+  { href: '/blog/', label: 'Blog', icon: 'pencil' },
+  { href: '/about/', label: 'About', icon: 'person' },
 ];
 
 /** Prefix a path with the configured base (works for user and project Pages sites). */

@@ -5,7 +5,7 @@ import { SITE, NAV, url } from '../site';
 const base = url('/').replace(/\/$/, '');
 const path = Astro.url.pathname.replace(/\/$/, '');
 const isActive = (href: string) => {
-  const full = href === '/' ? base : url(href);
+  const full = href === '/' ? base : url(href).replace(/\/$/, '');
   return href === '/' ? path === full : path === full || path.startsWith(full + '/');
 };
 ---

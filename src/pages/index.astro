@@ -4,28 +4,24 @@ import PostItem from '../components/PostItem.astro';
 import Icon from '../components/Icon.astro';
 import TermPrompt from '../components/TermPrompt.astro';
 import { getListing } from '../lib/posts';
+import { Image } from 'astro:assets';
+import profilePhoto from '../assets/profile.jpg';
 import { SITE, SUMMARY_SHORT, url } from '../site';
+import { graph, personSchema, websiteSchema } from '../lib/seo';
 
 // Home listing: newest two entries (posts or linked posts).
 const latest = (await getListing()).slice(0, 2);
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: SITE.name,
-  jobTitle: SITE.role,
-  worksFor: { '@type': 'Organization', name: 'Broadcom' },
-  url: new URL(url('/'), Astro.site).href,
-  image: new URL(url(SITE.photo), Astro.site).href,
-  sameAs: [SITE.linkedin, ...(SITE.github ? [SITE.github] : [])],
-};
+// WebSite + the site author (the same Person entity is referenced from every blog post).
+const jsonLd = graph(websiteSchema(), personSchema());
 ---
 <BaseLayout jsonLd={jsonLd}>
   <div class="home">
     <aside class="profile">
       <div class="photo-wrap">
         <div class="glow"></div>
-        <img src={url(SITE.photo)} alt={`Photo of ${SITE.name}`} width="240" height="240" />
+        <!-- Largest content above the fold: served as a right-sized WebP (shown at 156-180px) and fetched early. -->
+        <Image src={profilePhoto} alt={`Photo of ${SITE.name}`} width={180} height={180} densities={[1, 2]} format="webp" quality={80} loading="eager" fetchpriority="high" />
       </div>
       <p class="name">{SITE.name}</p>
       <p class="role">{SITE.role}</p>
@@ -45,7 +41,7 @@ const jsonLd = {
       </p>
       <div class="term-text term-step">
         {SUMMARY_SHORT.map((p) => <p>{p}</p>)}
-        <p><strong>Glad you're here. Feel free to check out my recent <a href={url('/blog')}>blogs</a>.</strong></p>
+        <p><strong>Glad you're here. Feel free to check out my recent <a href={url('/blog/')}>blogs</a>.</strong></p>
       </div>
     </section>
 
@@ -53,7 +49,7 @@ const jsonLd = {
       <section class="featured term-reveal" style="--d: 0.1s" aria-labelledby="featured-heading">
         <div class="featured-head">
           <h2 id="featured-heading">Latest writing</h2>
-          <a href={url('/blog')}>All writing <Icon name="arrow-right" /></a>
+          <a href={url('/blog/')}>All writing <Icon name="arrow-right" /></a>
         </div>
         <ul class="post-list">
           {latest.map((p) => <PostItem post={p} as="h3" showTags={false} />)}

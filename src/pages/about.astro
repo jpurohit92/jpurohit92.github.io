@@ -5,6 +5,7 @@ import ReadingProgress from '../components/ReadingProgress.astro';
 import ReadingPrefs from '../components/ReadingPrefs.astro';
 import ReadingHint from '../components/ReadingHint.astro';
 import ShareButtons from '../components/ShareButtons.astro';
+import { personSchema, graph } from '../lib/seo';
 import '../styles/article.css';
 
 // Source: LinkedIn profile.
@@ -28,7 +29,7 @@ const description =
   'A little about Jatin Purohit: 12+ years across cloud infrastructure, virtualization, automation and developer platforms, and a few things he believes in.';
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 ---
-<BaseLayout title="About" description={description}>
+<BaseLayout title="About" description={description} jsonLd={graph(personSchema({ mainEntityOfPage: pageUrl }))}>
   <ReadingProgress />
   <!-- Same shell as a blog post (see ArticleLayout): title + menu on the left, a card on the right whose
        toolbar stays fixed while only the text scrolls. Reading mode, text size and width come from article.css / article.ts. -->
