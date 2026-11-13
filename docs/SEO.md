@@ -122,7 +122,7 @@ In CI, `.github/workflows/deploy.yml` runs `npm run build && npm run seo:check` 
 2. Choose **URL prefix** and enter `https://jpurohit92.github.io/`. (A Domain property needs DNS access, which `github.io` does not give you.)
 3. Verify ownership with one of:
    - **HTML tag:** copy the `content` value of the `google-site-verification` meta tag. In GitHub: Settings > Secrets and variables > Actions > Variables > New repository variable named `PUBLIC_GSC_VERIFICATION`. Re-run the deploy workflow. The tag is then added to every page.
-   - **HTML file:** download the file Google gives you, put it in `public/`, deploy, then verify.
+   - **HTML file:** download the file Google gives you, put it in `public/`, deploy, then verify. Keep the file afterwards; removing it un-verifies the property. This site uses `public/google0cd3caa62e83c142.html`, and `seo:check` ignores such files.
 4. Open **Sitemaps** and submit `sitemap-index.xml`. Status should become "Success" with the discovered pages listed.
 5. Optional: URL Inspection > paste a post URL > Request indexing.
 

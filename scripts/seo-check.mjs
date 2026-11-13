@@ -60,8 +60,10 @@ const fileSet = new Set(distFiles);
 
 const urlPathOf = (file) => (file === '/index.html' ? '/' : file.endsWith('/index.html') ? file.slice(0, -'index.html'.length) : file);
 
+// Google Search Console ownership files (public/google<token>.html) are not pages; keep them as is.
+const isSiteVerification = (f) => /^google-site-verification:/.test(readFileSync(join(DIST, f), 'utf8'));
 const pages = distFiles
-  .filter((f) => f.endsWith('.html'))
+  .filter((f) => f.endsWith('.html') && !isSiteVerification(f))
   .map((file) => {
     const html = readFileSync(join(DIST, file), 'utf8');
     const headEnd = html.indexOf('</head>');
