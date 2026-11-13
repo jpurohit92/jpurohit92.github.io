@@ -206,7 +206,31 @@ if (prefsRoot) {
   const modeBtn = prefsRoot.querySelector<HTMLButtonElement>('[data-reading-mode]');
   const modeLabel = prefsRoot.querySelector<HTMLElement>('[data-reading-mode-label]');
   let animTimer: number | undefined;
+
+  // "Press ESC to exit" hint: shown for a moment once reading mode has finished loading (2s transition + 0.5s),
+  // then only while the pointer is over the article.
+  const hint = document.querySelector<HTMLElement>('.reading-hint');
+  const articleCard = document.querySelector<HTMLElement>('.article-main');
+  let intro = false;
+  let hovering = false;
+  let introTimer: number | undefined;
+  const renderHint = () => {
+    if (!hint) return;
+    const visible = root.classList.contains('reading-mode') && (intro || hovering);
+    hint.classList.toggle('is-quick', !intro); // the intro uses the page's 2s ease; hover in/out is quicker
+    hint.classList.toggle('is-visible', visible);
+  };
+  articleCard?.addEventListener('mouseenter', () => { hovering = true; renderHint(); });
+  articleCard?.addEventListener('mouseleave', () => { hovering = false; renderHint(); });
+
   const setReadingMode = (on: boolean) => {
+    clearTimeout(introTimer);
+    intro = on;
+    if (on) {
+      // The pointer is usually still over the card (the toggle lives in it), so require a fresh hover to bring the hint back.
+      hovering = false;
+      introTimer = window.setTimeout(() => { intro = false; renderHint(); }, 2500);
+    }
     // rm-anim enables the 2s colour cross-fade only while switching, so normal hover effects stay snappy.
     root.classList.add('rm-anim');
     clearTimeout(animTimer);
@@ -214,7 +238,8 @@ if (prefsRoot) {
     root.classList.toggle('reading-mode', on);
     modeBtn?.setAttribute('aria-pressed', String(on));
     if (modeLabel) modeLabel.textContent = on ? 'Exit reading mode' : 'Reading mode';
-    if (status) status.textContent = on ? 'Reading mode on' : 'Reading mode off';
+    if (status) status.textContent = on ? 'Reading mode on. Press Escape to exit.' : 'Reading mode off';
+    renderHint();
   };
   modeBtn?.addEventListener('click', () => setReadingMode(!root.classList.contains('reading-mode')));
   document.addEventListener('keydown', (e) => {

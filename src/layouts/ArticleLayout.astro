@@ -92,6 +92,8 @@ const jsonLd = {
     </article>
     {hasToc && <TableOfContents headings={tocHeadings} variant="desktop" />}
   </div>
+  <!-- Shown by scripts/article.ts while reading mode is on; decorative (copy-status announces the change). -->
+  <div class="reading-hint" aria-hidden="true">Press <kbd>ESC</kbd> to exit from reading mode</div>
   <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
   <script>
     import '../scripts/article.ts';
