@@ -32,7 +32,6 @@ export const SUMMARY_SHORT = [
   'I’m a Principal Technical Marketing Engineer at VMware by Broadcom, with over 12 years of experience exploring, building, and working with cloud infrastructure, virtualization, developer platforms, and automation.',
   'A big part of what I do involves APIs, SDKs, PowerCLI, and private cloud technologies. I enjoy breaking down complex technical concepts, experimenting with new tools, and making infrastructure easier for developers to work with.',
   'Along the way, I’ve had the opportunity to share my experiences and learn from the community at events like VMware Explore, Oracle CloudWorld, and VMUG.',
-  'This website is my little corner of the internet where I share what I’m building, what I’m learning, and what I find interesting across cloud infrastructure, developer tools, automation, AI, and everything in between.',
 ];
 
 // Blog categories shown in the filter sidebar (in this order), each with an Octicon name.

@@ -171,6 +171,10 @@ html[data-theme='dark'] .theme-toggle .i-moon { display: none; }
 }
 
 /* ---------- Home ---------- */
+/* No visible page scrollbar on the home page. The layout is sized to fit one screen; on a very short
+   window the page can still be scrolled with the wheel, trackpad or keyboard. */
+html:has(.home) { scrollbar-width: none; }
+html:has(.home)::-webkit-scrollbar { display: none; }
 .home {
   position: relative; width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px 32px;
   flex: 1; display: grid; grid-template-columns: minmax(240px, 22%) 1fr; gap: 20px 40px; align-items: start;
@@ -206,7 +210,7 @@ html[data-theme='dark'] .theme-toggle .i-moon { display: none; }
 .intro {
   /* Light: high-contrast prompt on white. Dark: bright terminal tones. */
   --t-green: #0a7a2f; --t-blue: #0550ae;
-  width: 80%; min-width: 0; justify-self: end; align-self: start;
+  width: 100%; min-width: 0; justify-self: end; align-self: start;
   font-family: 'JetBrainsMono Nerd Font', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 18px; /* Match .prose article body */
 }
@@ -363,12 +367,17 @@ html[data-theme='dark'] .intro {
 @media (max-width: 640px) { .pager button { padding: 0 10px; } }
 
 /* ---------- Home: Featured Writing ---------- */
-.featured { grid-column: 1 / -1; margin-top: 8px; padding-top: 40px; border-top: 1px solid var(--line); }
+.featured { grid-column: 1 / -1; margin-top: 0; padding-top: 20px; border-top: 1px solid var(--line); }
 .featured-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 8px; }
 .featured-head h2 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .featured-head a { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; padding: 8px 0; }
 .featured .post-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); column-gap: 24px; }
 .featured .post-item h3 { font-size: 20px; }
+/* Keep the home page to one screen (no scrollbar): compact cards, description limited to 2 lines. */
+.featured .post-item { padding-top: 14px; padding-bottom: 14px; }
+.featured .post-item p:not(.post-meta) {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; margin-bottom: 0;
+}
 .featured .post-item::before { display: none; }
 
 /* ---------- Responsive ---------- */
