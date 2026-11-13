@@ -87,6 +87,9 @@ const jsonLd = graph(
           <div class="article-meta">
             {category && <span class="cat"><Icon name="tag" /><a href={`${url('/blog/')}?category=${encodeURIComponent(category)}`}>{category}</a></span>}
             <span class="meta-item">
+              <Icon name="person" />By {author === SITE.name ? <a href={url('/about/')}>{author}</a> : author}
+            </span>
+            <span class="meta-item">
               <Icon name="calendar" /><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time>
             </span>
             {showUpdated && (

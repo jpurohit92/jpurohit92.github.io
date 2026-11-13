@@ -243,6 +243,7 @@ for (const p of pages) {
         if (!bp[k]) error(where, 'JSONLD_BLOGPOSTING', `BlogPosting is missing "${k}".`);
       }
       if (bp.headline && bp.headline !== h1s[0]?.text) error(where, 'JSONLD_MISMATCH', `BlogPosting headline "${bp.headline}" differs from the visible <h1> "${h1s[0]?.text}".`);
+      if (bp.author?.name && !text(p.body).includes(bp.author.name)) error(where, 'JSONLD_MISMATCH', `BlogPosting author "${bp.author.name}" is not shown on the page.`);
       if (bp.description && bp.description !== p.description) error(where, 'JSONLD_MISMATCH', 'BlogPosting description differs from the meta description.');
       if (bp.datePublished && isoDay(bp.datePublished) !== isoDay(post.data.date)) error(where, 'JSONLD_MISMATCH', `datePublished ${bp.datePublished} does not match the post date ${isoDay(post.data.date)}.`);
       const visibleDates = [...p.body.matchAll(/<time\b[^>]*datetime=["']?([\d-]+)/gi)].map((m) => m[1]);

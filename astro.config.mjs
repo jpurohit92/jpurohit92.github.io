@@ -11,6 +11,7 @@ import { readBlogPosts } from './src/lib/frontmatter.mjs';
 // (meta refresh + canonical to the target) at the old URL.
 const redirects = {
   '/projects': '/about/', // the Projects page was retired
+  '/blog/bengaluru-tech-summit-2027': '/blog/bengaluru-tech-summit-2026/', // the post URL had the wrong year
 };
 
 // Sitemap: only pages that should be indexed. Drafts are never built; noindex posts, posts whose

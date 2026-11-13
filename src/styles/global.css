@@ -181,10 +181,10 @@ html:has(.home)::-webkit-scrollbar { display: none; }
   /* Equal air above and below the profile + intro block (matches the footer gap). */
   align-content: center;
 }
-/* Shell typing on the home page (no terminal window). Hidden until the script takes over; CSS fallback if it never runs. */
-.js-typewriter:not(.tw-ready) .intro { visibility: hidden; animation: tw-fallback 0s linear 3s forwards; }
+/* Shell typing on the home page (no terminal window). The heading is always visible; the command line and intro text stay hidden until the script takes over (CSS fallback if it never runs). */
+.js-typewriter:not(.tw-ready) .intro :is(.term-line, .term-text) { visibility: hidden; animation: tw-fallback 0s linear 3s forwards; }
 @keyframes tw-fallback { to { visibility: visible; } }
-.js-typewriter.tw-ready .term-step:not(.on) { visibility: hidden; }
+.js-typewriter.tw-ready .term-step:not(.term-h1):not(.on) { visibility: hidden; }
 .typed .ch { visibility: hidden; }
 .typed .ch.on { visibility: visible; }
 .term-reveal { transition: opacity 0.5s ease var(--d, 0s), transform 0.5s ease var(--d, 0s); }

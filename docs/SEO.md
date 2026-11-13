@@ -27,7 +27,7 @@ Key behaviours:
 - **Social images:** a post's `cover` (resized to 1200x630 by Astro) if set, otherwise `og-default.png`. Always absolute URLs.
 - **Category and tag filters** (`/blog/?category=...&tag=...`) are client-side views of `/blog/`. They canonicalize to `/blog/`, are not in the sitemap, and every post is already in the static HTML of `/blog/`. Posts link to these filtered views from their category and tags.
 - **Reading mode** only toggles CSS classes on the same URL. It does not create new pages or duplicate indexable content. The extra title shown in reading mode is `aria-hidden` and `data-nosnippet`.
-- **Retired pages** get a static redirect page via `redirects` in `astro.config.mjs` (for example `/projects/` redirects to `/about/`). GitHub Pages cannot send real 301s, so this is a meta-refresh page with a canonical to the target.
+- **Retired pages** get a static redirect page via `redirects` in `astro.config.mjs` (for example `/projects/` redirects to `/about/`, and `/blog/bengaluru-tech-summit-2027/` to its corrected `-2026` URL). GitHub Pages cannot send real 301s, so this is a meta-refresh page with a canonical to the target.
 
 ## Structured data
 
@@ -38,7 +38,7 @@ Key behaviours:
 | Blog index | `BreadcrumbList` (Home > Blog) |
 | Blog post | `BlogPosting` and `BreadcrumbList` (Home > Blog > Post) |
 
-Rules: every value must be real and visible on the page. `dateModified` is only emitted when the post has an `updated` date after `date`. `image` is only emitted when the post has a `cover`. The Person `sameAs` list comes from `SEO.profiles` (LinkedIn, GitHub). Do not add profiles you do not own.
+Rules: every value must be real and visible on the page. `dateModified` is only emitted when the post has an `updated` date after `date`. `image` is only emitted when the post has a `cover`. The author is shown as a byline ("By Jatin Purohit", linked to About) in the article meta row. The Person `sameAs` list comes from `SEO.profiles` (LinkedIn, GitHub). Do not add profiles you do not own.
 
 There are no per-project pages, so no `SoftwareSourceCode` / `CreativeWork` markup is generated. If project pages are added later, add a builder in `src/lib/seo.ts` and use it from the page.
 

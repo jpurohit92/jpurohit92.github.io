@@ -15,7 +15,7 @@ const latest = (await getListing()).slice(0, 2);
 // WebSite + the site author (the same Person entity is referenced from every blog post).
 const jsonLd = graph(websiteSchema(), personSchema());
 ---
-<BaseLayout jsonLd={jsonLd}>
+<BaseLayout jsonLd={jsonLd} preloadMono>
   <div class="home">
     <aside class="profile">
       <div class="photo-wrap">

@@ -3,6 +3,8 @@ import '../styles/global.css';
 // Preload the Latin subset of the body font (the only Inter file most pages need) so text renders
 // in the final font sooner. Vite resolves this to the same hashed file the CSS uses.
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import monoRegular from '../fonts/JetBrainsMonoNerdFont-Regular.woff2?url';
+import monoBold from '../fonts/JetBrainsMonoNerdFont-Bold.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Seo from '../components/Seo.astro';
@@ -12,8 +14,11 @@ import { url } from '../site';
 import { SEO } from '../lib/seo-config.mjs';
 
 // SEO props are documented on components/Seo.astro.
-type Props = ComponentProps<typeof Seo>;
-const seo = Astro.props;
+type Props = ComponentProps<typeof Seo> & {
+  /** Preload the shell-prompt font (home page only, where the heading uses it). */
+  preloadMono?: boolean;
+};
+const { preloadMono = false, ...seo } = Astro.props;
 ---
 <!doctype html>
 <html lang="en" data-theme="light">
@@ -24,6 +29,8 @@ const seo = Astro.props;
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
     <link rel="alternate" type="application/rss+xml" title={SEO.siteName} href={url('/rss.xml')} />
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    {preloadMono && <link rel="preload" href={monoBold} as="font" type="font/woff2" crossorigin />}
+    {preloadMono && <link rel="preload" href={monoRegular} as="font" type="font/woff2" crossorigin />}
     <Analytics />
 
     <script is:inline>
