@@ -29,6 +29,7 @@ export const SEO = {
   profiles: {
     linkedin: 'https://www.linkedin.com/in/jatinpurohit92/',
     github: 'https://github.com/jpurohit92',
+    vmwareBlog: 'https://blogs.vmware.com/cloud-foundation/author/jpurohit/',
   },
   /** Sitemap index written by @astrojs/sitemap (verified against the build output by seo:check). */
   sitemapIndexPath: '/sitemap-index.xml',

@@ -13,6 +13,7 @@ export const SITE = {
   email: 'jpurohit92@outlook.com',
   github: SEO.profiles.github,
   linkedin: SEO.profiles.linkedin,
+  vmwareBlog: SEO.profiles.vmwareBlog,
   // Profile photo lives in /public.
   photo: '/profile.jpg',
 };

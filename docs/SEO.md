@@ -38,7 +38,7 @@ Key behaviours:
 | Blog index | `BreadcrumbList` (Home > Blog) |
 | Blog post | `BlogPosting` and `BreadcrumbList` (Home > Blog > Post) |
 
-Rules: every value must be real and visible on the page. `dateModified` is only emitted when the post has an `updated` date after `date`. `image` is only emitted when the post has a `cover`. The author is shown as a byline ("By Jatin Purohit", linked to About) in the article meta row. The Person `sameAs` list comes from `SEO.profiles` (LinkedIn, GitHub). Do not add profiles you do not own.
+Rules: every value must be real and visible on the page. `dateModified` is only emitted when the post has an `updated` date after `date`. `image` is only emitted when the post has a `cover`. The author is shown as a byline ("By Jatin Purohit", linked to About) in the article meta row. The Person `sameAs` list comes from `SEO.profiles` (LinkedIn, GitHub, VMware Cloud Foundation blog author page; each is also linked on the home page and in the footer). Do not add profiles you do not own.
 
 There are no per-project pages, so no `SoftwareSourceCode` / `CreativeWork` markup is generated. If project pages are added later, add a builder in `src/lib/seo.ts` and use it from the page.
 
