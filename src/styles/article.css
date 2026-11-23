@@ -300,9 +300,14 @@ html.rm-anim .site-header { transition: background-color 2s ease, border-color 2
   position: relative; color: var(--ink); letter-spacing: -0.02em; line-height: 1.25; font-weight: 650;
   text-wrap: balance; /* scroll offset comes from html scroll-padding-top */
 }
-.prose h2 { font-size: 1.4em; margin: 1.9em 0 0.6em; }
-.prose h3 { font-size: 1.18em; margin: 1.6em 0 0.5em; }
-.prose h4 { font-size: 1.05em; margin: 1.4em 0 0.4em; }
+/* Text sizes match the About page (.about-summary in global.css): body 0.945em / 1.75, h2 1.6em, h3 1em bold.
+   Body size is set on the text blocks (not on .prose) so code, tables and captions keep their own sizes,
+   and nested lists do not shrink twice. */
+.prose p, .prose > ul, .prose > ol, .prose > dl { font-size: 0.945em; line-height: 1.75; }
+.prose li > p { font-size: inherit; line-height: inherit; }
+.prose h2 { font-size: 1.6em; margin: 2em 0 0.6em; line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; }
+.prose h3 { font-size: 1em; margin: 1.5em 0 0.4em; font-weight: 700; letter-spacing: -0.01em; }
+.prose h4 { font-size: 0.945em; margin: 1.4em 0 0.4em; font-weight: 700; }
 .prose strong { color: var(--ink); font-weight: 650; }
 .prose a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; overflow-wrap: anywhere; }
 .prose a:hover { text-decoration-thickness: 2px; }
