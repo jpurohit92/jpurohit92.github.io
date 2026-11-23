@@ -44,8 +44,9 @@ const { preloadMono = false, ...seo } = Astro.props;
           root.setAttribute('data-theme', t);
           var r = JSON.parse(localStorage.getItem('reading') || '{}');
           if (r.size) root.setAttribute('data-size', r.size);
-          if (r.width) root.setAttribute('data-width', r.width);
-        } catch (e) {}
+          // Reading width defaults to wide ("full") until the reader picks another one.
+          root.setAttribute('data-width', r.width || 'full');
+        } catch (e) { root.setAttribute('data-width', 'full'); }
         // Home shell typing: skipped only for reduced-motion users.
         try {
           if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {

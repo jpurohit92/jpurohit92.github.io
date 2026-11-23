@@ -183,11 +183,13 @@ if (prefsRoot) {
   };
   const sync = () => {
     const state = read();
-    const known: Record<string, string[]> = { size: ['sm', 'lg'], width: ['narrow', 'full'] };
+    const known: Record<string, string[]> = { size: ['sm', 'md', 'lg'], width: ['narrow', 'md', 'full'] };
+    // Defaults when nothing is saved: normal text size, wide reading width ("md" = medium, set explicitly by the reader).
+    const defaults: Record<string, string> = { size: 'md', width: 'full' };
     for (const kind of ['size', 'width'] as const) {
       // Ignore anything saved by an older version (e.g. width "wide") and fall back to the default.
       const saved = state[kind];
-      const value = saved && known[kind].includes(saved) ? saved : 'md';
+      const value = saved && known[kind].includes(saved) ? saved : defaults[kind];
       if (value === 'md') root.removeAttribute(`data-${kind}`);
       else root.setAttribute(`data-${kind}`, value);
       prefsRoot.querySelectorAll<HTMLButtonElement>(`[data-pref="${kind}"]`).forEach((b) =>
