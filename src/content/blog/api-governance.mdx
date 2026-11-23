@@ -115,6 +115,10 @@ The compiler then reports diagnostics right in the files developers are editing.
 npx tsp compile examples/basic --no-emit --warn-as-error
 ```
 
+Put together, the workflow looks like this:
+
+![Workflow diagram: TypeSpec definitions (.tsp) go to the TypeSpec compiler, which applies an API standards library of design rules and linters. Validation passes to the OpenAPI emitter, producing the generated OpenAPI contract that feeds SDKs, documentation and service implementation. Violations return diagnostics and developer feedback to the TypeSpec definitions.](../../assets/api-governance-workflow.jpg)
+
 At scale, a platform or architecture team maintains and versions the library, and service teams consume it as a dependency. Changes to standards follow a normal review and release process instead of a document everyone is expected to revisit.
 
 That doesn't mean centralizing every decision. The goal is guardrails for repeatable conventions, leaving teams free to make the domain-specific calls. **Good governance should make the correct patterns easier to adopt, not add another approval bottleneck.**
