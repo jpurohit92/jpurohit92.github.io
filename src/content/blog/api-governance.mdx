@@ -1,0 +1,159 @@
+---
+title: "API Governance at Scale: Codifying API Design Standards with TypeSpec"
+description: "How enterprises can use TypeSpec to codify API design standards, enforce governance across engineering teams, and generate consistent OpenAPI contracts."
+date: 2026-11-18
+seoTitle: "API Governance at Scale with TypeSpec"
+category: Developer Experience
+tags: [openapi, rest-api, sdk, vcf]
+---
+
+*Exploring how enterprises can develop thousands of APIs across engineering teams without compromising on consistency, governance, and developer experience.*
+
+## API-First Development: The Foundation
+
+APIs have become the primary interface through which developers interact with software platforms, whether they are provisioning infrastructure, configuring networking, or building applications.
+
+API-first development reverses the traditional "build the service, document it later" approach. We begin with a contract that describes the resources, operations, and expected behavior of an API, and the implementation follows. The [OpenAPI Specification](https://www.openapis.org/) makes this practical: it is a standardized, machine-readable description of HTTP APIs that can generate documentation, SDKs, mocks, and other tooling.
+
+In [our work on VMware Cloud Foundation 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/25/unlocking-the-full-potential-of-programmable-infrastructure-with-vmware-cloud-foundation-9-1-new-features-and-capabilities/), OpenAPI contracts are the foundation of a unified, API-first consumption experience. They drive our SDKs and automation tooling across languages such as Python, Java, and PowerShell.
+
+That raises an interesting question: **how do we ensure that thousands of APIs, built by multiple engineering teams, follow the same design standards?** That is where API governance comes in.
+
+## Why Consistency Is Hard at Enterprise Scale
+
+Across vSphere, vSAN, NSX, and VMware Cloud Foundation, there are thousands of API operations. Different teams own different components, each with their own release cycles and architectures.
+
+Left alone, the differences add up. One team exposes `/v1/users`, another prefers `/v1/getUsers`. Pagination, error responses, status codes, and versioning vary from service to service. Each API may work perfectly well on its own, but a developer automating compute, storage, and networking shouldn't have to relearn the design philosophy for every service. And if SDKs are generated from these contracts, the inconsistencies flow straight into the developer tooling.
+
+**An API can be technically valid and still be inconsistent with the rest of the platform.** OpenAPI standardizes how we *describe* APIs. It doesn't guarantee that they follow an organization's design guidelines.
+
+Most enterprises already have those guidelines. The challenge is ensuring teams actually follow them. Often they live in a portal, and architecture and code reviews become the enforcement mechanism. But should a reviewer really have to spot every action verb in an API path across hundreds of operations?
+
+If a design rule can be expressed programmatically, it can be validated automatically. That is the premise behind **API governance as code**: moving repeatable design standards from documents into the development toolchain.
+
+## TypeSpec as a Foundation
+
+One approach is an internal domain-specific language (DSL) for API definition. At VMware, we have internal DSL-style tooling that gives teams shared abstractions, models, and validation. It works well, but building and maintaining a language, compiler, and integrations is a real investment.
+
+Fortunately, we don't have to start from scratch. Microsoft has open-sourced [TypeSpec](https://typespec.io/), an extensible language and tooling ecosystem for describing APIs. It supports models, operations, interfaces, namespaces, templates, decorators, libraries, linters, and emitters. A simple API looks like this:
+
+```typespec
+import "@typespec/http";
+
+using TypeSpec.Http;
+
+@service
+namespace UserService;
+
+model User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+@route("/v1/users")
+interface Users {
+  @get
+  list(): User[];
+}
+```
+
+An emitter compiles this into an OpenAPI specification.
+
+**Why not just write `openapi.yaml` directly?** For many projects, you should. But as the number of services grows, TypeSpec adds a level of abstraction: reusable language constructs, compiled into standardized outputs. OpenAPI remains the interoperable contract that SDK generators and documentation tools consume. TypeSpec becomes the higher-level source used to author, validate, and maintain it.
+
+What interests me most is that its linters, libraries, and templates make governance part of the normal authoring experience.
+
+## A Small Experiment: Governance as a Linting Library
+
+To explore this, I built a sample project that packages API design conventions as a reusable TypeSpec linting library.
+
+**Sample project: [github.com/jpurohit92/api-design-typespec](https://github.com/jpurohit92/api-design-typespec)**
+
+The shared package, `@api-design/standards`, ships a recommended ruleset with five rules:
+
+1. **Resource-oriented URI naming:** prefer resource nouns over action-oriented paths.
+2. **HTTP method conventions:** check request-body conventions for methods such as GET, HEAD, and DELETE.
+3. **HTTP status codes:** check for declared success and error responses and an allowed set of codes.
+4. **Naming and response consistency:** apply naming conventions and a shared error-response pattern.
+5. **API versioning:** check for versioned routes or TypeSpec versioning metadata.
+
+The project uses **ACME** as a fictional organization. These are illustrative conventions, not official VMware API policies.
+
+I started with the simplest: resource paths should use nouns, not action verbs.
+
+| API path | Linter result |
+| --- | --- |
+| `/v1/users` | Valid |
+| `/v1/payment-methods` | Valid |
+| `/v1/getUsers` | Warning |
+| `/v1/createOrder` | Warning |
+| `/v1/approvePayment` | Warning |
+
+The rule inspects resolved HTTP paths and looks for configured action verbs at word boundaries, ignoring version segments and path parameters. It is a deliberately limited heuristic, not a full understanding of English or REST. The point was to see whether a convention that normally lives in a design document could be validated during compilation. An example with six deliberately invalid paths produced six warnings:
+
+```text
+warning @api-design/standards/acme-api-rule1:
+API path contains an action verb. Use resource-oriented naming.
+```
+
+What matters isn't the complexity of the rule. It's that the rule is now **executable, reusable, and available to every project that adopts the library**.
+
+## Making Standards Available to Every Team
+
+Instead of every team writing its own validation, an organization can publish one shared library. A consuming project enables the recommended ruleset in `tspconfig.yaml`:
+
+```yaml
+linter:
+  extends:
+    - "@api-design/standards/recommended"
+```
+
+The compiler then reports diagnostics right in the files developers are editing. The same checks can run in CI/CD, and the sample project documents `--warn-as-error` for builds where lint warnings should fail:
+
+```bash
+npx tsp compile examples/basic --no-emit --warn-as-error
+```
+
+At scale, a platform or architecture team maintains and versions the library, and service teams consume it as a dependency. Changes to standards follow a normal review and release process instead of a document everyone is expected to revisit.
+
+That doesn't mean centralizing every decision. The goal is guardrails for repeatable conventions, leaving teams free to make the domain-specific calls. **Good governance should make the correct patterns easier to adopt, not add another approval bottleneck.**
+
+## Why TypeSpec and Not Only OpenAPI Linting?
+
+Excellent tools like [Spectral](https://github.com/stoplightio/spectral) already lint OpenAPI, and if you author OpenAPI directly, that is the right approach. For me, it comes down to where the source of truth lives. If developers author in TypeSpec, they should get feedback in TypeSpec, while defining the API, not after an OpenAPI document is generated. Rules can also use the compiler's semantic model: a final route may be assembled from several namespaces, interfaces, and operations, and a linter can inspect the resolved operation rather than text-matching a single decorator.
+
+I wouldn't frame it as TypeSpec versus OpenAPI linting. They complement each other: TypeSpec enforces standards at the authoring layer, and validating the emitted OpenAPI gives assurance about the contract consumers receive.
+
+## Should We Leave API Governance to AI?
+
+While building the naming rule, I wondered whether a language model could decide if a path is resource-oriented. A verb list handles obvious cases like `getUsers`, but words such as `search`, `order`, and `report` can be nouns or verbs depending on context. A model could help flag ambiguous names and suggest alternatives.
+
+But should a probabilistic model be the authority for *mandatory* governance? I don't think so, especially when a rule can be deterministic. Developers expect a linter to give the same result from the same source and configuration, and governance teams need rules that are explicit, reviewable, and reproducible. Model output can vary with version or configuration, and finding a possible issue isn't the same as proving compliance.
+
+My preference: deterministic rules at the center of enforceable governance, with AI assisting on suggestions and deeper design reviews. **AI can help us design better APIs. It shouldn't quietly redefine the organization's standards on every run.**
+
+## Final Thoughts
+
+We've seen Infrastructure as Code and Policy as Code turn repeatable expectations into version-controlled, reviewable definitions. API governance can follow the same path:
+
+**Define the API → Apply shared design patterns → Validate governance rules → Generate OpenAPI → Generate SDKs and implement services.**
+
+There are limits. Not every principle fits a lint rule, compatibility checks need to compare contract versions, security and compliance need their own controls, and a poorly designed rule creates false positives. The aim is to automate the repeatable decisions and keep human review for the ones that need judgment.
+
+My [sample governance library](https://github.com/jpurohit92/api-design-typespec) is a small experiment, but it shows the premise: define standards once, distribute them across projects, and validate them where APIs are authored.
+
+**If API-first development standardizes how we describe APIs, governance as code can help standardize how we design them.**
+
+---
+
+*This article reflects my experience with API-first infrastructure platforms and my personal experiments with Microsoft's open-source TypeSpec project. The sample governance library is an independent demonstration and is not an official VMware implementation.*
+
+## References
+
+- [Sample TypeSpec API Design Standards Project](https://github.com/jpurohit92/api-design-typespec)
+- [Unlocking the Full Potential of Programmable Infrastructure with VMware Cloud Foundation 9.1](https://blogs.vmware.com/cloud-foundation/2026/05/25/unlocking-the-full-potential-of-programmable-infrastructure-with-vmware-cloud-foundation-9-1-new-features-and-capabilities/)
+- [TypeSpec](https://typespec.io/)
+- [TypeSpec on GitHub](https://github.com/microsoft/typespec)
+- [OpenAPI Initiative](https://www.openapis.org/)
+- [Spectral](https://github.com/stoplightio/spectral)
