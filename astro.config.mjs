@@ -31,6 +31,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      // Plain sitemap: drop the unused news/image/video/xhtml namespaces so the file is the
+      // minimal urlset Google documents.
+      namespaces: { news: false, xhtml: false, image: false, video: false },
       filter: (page) => !excluded.has(new URL(page).pathname),
       // <lastmod> only where a real date exists (the post's `updated`, else its publication date).
       serialize: (item) => {
